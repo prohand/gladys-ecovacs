@@ -1,0 +1,792 @@
+{
+  "manifest_version": 1,
+  "type": "device",
+  "name": "Ecovacs",
+  "description": {
+    "en": "Control Ecovacs Deebot robot vacuums and GOAT mowers: start, dock, battery, errors.",
+    "fr": "Pilotez les aspirateurs Ecovacs Deebot et tondeuses GOAT : départ, base, batterie."
+  },
+  "version": "1.0.0",
+  "docker_image": "ghcr.io/prohand/gladys-ecovacs:1.0.0",
+  "gladys_version": ">=5.1.0",
+  "cover_image": "https://raw.githubusercontent.com/prohand/gladys-ecovacs/main/cover.png",
+  "categories": ["appliances"],
+  "transports": ["cloud"],
+  "config_schema": [
+    {
+      "key": "intro",
+      "type": "section",
+      "label": {
+        "en": "Getting started",
+        "fr": "Pour commencer"
+      },
+      "description": {
+        "en": "Your robots (Deebot vacuums, GOAT mowers) are reached through the Ecovacs cloud, with the account of the Ecovacs Home app: add the robots in the app first, then enter the same email, password and country here. Accounts created with Google, Apple or Facebook sign-in need a password: set one in the app (Profile, account settings).",
+        "fr": "Vos robots (aspirateurs Deebot, tondeuses GOAT) sont joints via le cloud Ecovacs, avec le compte de l'application Ecovacs Home : ajoutez d'abord les robots dans l'application, puis saisissez ici le même e-mail, mot de passe et pays. Un compte créé avec Google, Apple ou Facebook a besoin d'un mot de passe : définissez-en un dans l'application (Profil, paramètres du compte)."
+      },
+      "links": [
+        {
+          "url": "https://www.ecovacs.com/global/app",
+          "label": {
+            "en": "Ecovacs Home app",
+            "fr": "Application Ecovacs Home"
+          }
+        }
+      ]
+    },
+    {
+      "key": "email",
+      "type": "string",
+      "label": {
+        "en": "Email",
+        "fr": "E-mail"
+      },
+      "description": {
+        "en": "The email of your Ecovacs Home account.",
+        "fr": "L'e-mail de votre compte Ecovacs Home."
+      },
+      "placeholder": {
+        "en": "e.g. me@example.com",
+        "fr": "ex. moi@exemple.fr"
+      },
+      "required": true
+    },
+    {
+      "key": "password",
+      "type": "secret",
+      "label": {
+        "en": "Password",
+        "fr": "Mot de passe"
+      },
+      "description": {
+        "en": "The password of your Ecovacs Home account. Only its MD5 fingerprint is sent to Ecovacs, as the app does.",
+        "fr": "Le mot de passe de votre compte Ecovacs Home. Seule son empreinte MD5 est envoyée à Ecovacs, comme le fait l'application."
+      },
+      "required": true
+    },
+    {
+      "key": "country",
+      "type": "select",
+      "label": {
+        "en": "Country of the account",
+        "fr": "Pays du compte"
+      },
+      "description": {
+        "en": "The country chosen when the account was created: it decides which Ecovacs servers hold it.",
+        "fr": "Le pays choisi à la création du compte : il détermine les serveurs Ecovacs qui l'hébergent."
+      },
+      "required": true,
+      "default": "FR",
+      "options": [
+        {
+          "value": "FR",
+          "label": {
+            "en": "France",
+            "fr": "France"
+          }
+        },
+        {
+          "value": "BE",
+          "label": {
+            "en": "Belgium",
+            "fr": "Belgique"
+          }
+        },
+        {
+          "value": "CH",
+          "label": {
+            "en": "Switzerland",
+            "fr": "Suisse"
+          }
+        },
+        {
+          "value": "LU",
+          "label": {
+            "en": "Luxembourg",
+            "fr": "Luxembourg"
+          }
+        },
+        {
+          "value": "DE",
+          "label": {
+            "en": "Germany",
+            "fr": "Allemagne"
+          }
+        },
+        {
+          "value": "AT",
+          "label": {
+            "en": "Austria",
+            "fr": "Autriche"
+          }
+        },
+        {
+          "value": "NL",
+          "label": {
+            "en": "Netherlands",
+            "fr": "Pays-Bas"
+          }
+        },
+        {
+          "value": "ES",
+          "label": {
+            "en": "Spain",
+            "fr": "Espagne"
+          }
+        },
+        {
+          "value": "PT",
+          "label": {
+            "en": "Portugal",
+            "fr": "Portugal"
+          }
+        },
+        {
+          "value": "IT",
+          "label": {
+            "en": "Italy",
+            "fr": "Italie"
+          }
+        },
+        {
+          "value": "GB",
+          "label": {
+            "en": "United Kingdom",
+            "fr": "Royaume-Uni"
+          }
+        },
+        {
+          "value": "IE",
+          "label": {
+            "en": "Ireland",
+            "fr": "Irlande"
+          }
+        },
+        {
+          "value": "DK",
+          "label": {
+            "en": "Denmark",
+            "fr": "Danemark"
+          }
+        },
+        {
+          "value": "SE",
+          "label": {
+            "en": "Sweden",
+            "fr": "Suède"
+          }
+        },
+        {
+          "value": "NO",
+          "label": {
+            "en": "Norway",
+            "fr": "Norvège"
+          }
+        },
+        {
+          "value": "FI",
+          "label": {
+            "en": "Finland",
+            "fr": "Finlande"
+          }
+        },
+        {
+          "value": "PL",
+          "label": {
+            "en": "Poland",
+            "fr": "Pologne"
+          }
+        },
+        {
+          "value": "CZ",
+          "label": {
+            "en": "Czech Republic",
+            "fr": "République tchèque"
+          }
+        },
+        {
+          "value": "US",
+          "label": {
+            "en": "United States",
+            "fr": "États-Unis"
+          }
+        },
+        {
+          "value": "CA",
+          "label": {
+            "en": "Canada",
+            "fr": "Canada"
+          }
+        },
+        {
+          "value": "AU",
+          "label": {
+            "en": "Australia",
+            "fr": "Australie"
+          }
+        },
+        {
+          "value": "NZ",
+          "label": {
+            "en": "New Zealand",
+            "fr": "Nouvelle-Zélande"
+          }
+        },
+        {
+          "value": "JP",
+          "label": {
+            "en": "Japan",
+            "fr": "Japon"
+          }
+        },
+        {
+          "value": "KR",
+          "label": {
+            "en": "South Korea",
+            "fr": "Corée du Sud"
+          }
+        },
+        {
+          "value": "SG",
+          "label": {
+            "en": "Singapore",
+            "fr": "Singapour"
+          }
+        },
+        {
+          "value": "MY",
+          "label": {
+            "en": "Malaysia",
+            "fr": "Malaisie"
+          }
+        },
+        {
+          "value": "TW",
+          "label": {
+            "en": "Taiwan",
+            "fr": "Taïwan"
+          }
+        },
+        {
+          "value": "IN",
+          "label": {
+            "en": "India",
+            "fr": "Inde"
+          }
+        },
+        {
+          "value": "CN",
+          "label": {
+            "en": "China (mainland)",
+            "fr": "Chine (continentale)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "poll_frequency",
+      "type": "select",
+      "label": {
+        "en": "Refresh interval",
+        "fr": "Intervalle de rafraîchissement"
+      },
+      "description": {
+        "en": "How often each robot is asked for its state through the cloud.",
+        "fr": "Fréquence à laquelle l'état de chaque robot est demandé via le cloud."
+      },
+      "required": false,
+      "default": "60",
+      "options": [
+        {
+          "value": "15",
+          "label": {
+            "en": "15 seconds",
+            "fr": "15 secondes"
+          }
+        },
+        {
+          "value": "30",
+          "label": {
+            "en": "30 seconds",
+            "fr": "30 secondes"
+          }
+        },
+        {
+          "value": "60",
+          "label": {
+            "en": "1 minute",
+            "fr": "1 minute"
+          }
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "key": "test_connection",
+      "label": {
+        "en": "Test the connection",
+        "fr": "Tester la connexion"
+      },
+      "timeout_seconds": 45
+    },
+    {
+      "key": "locate",
+      "label": {
+        "en": "Locate a robot",
+        "fr": "Localiser un robot"
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Robot",
+            "fr": "Robot"
+          },
+          "required": true
+        }
+      ]
+    }
+  ],
+  "scene_triggers": [
+    {
+      "key": "cleaning_started",
+      "label": {
+        "en": "Cleaning or mowing started",
+        "fr": "Nettoyage ou tonte démarré"
+      },
+      "description": {
+        "en": "A robot started working (not when it resumes after a pause).",
+        "fr": "Un robot a commencé à travailler (pas quand il reprend après une pause)."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Robot",
+            "fr": "Robot"
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "name",
+          "type": "string",
+          "label": {
+            "en": "Robot name",
+            "fr": "Nom du robot"
+          }
+        }
+      ]
+    },
+    {
+      "key": "cleaning_finished",
+      "label": {
+        "en": "Cleaning or mowing finished",
+        "fr": "Nettoyage ou tonte terminé"
+      },
+      "description": {
+        "en": "A robot stopped working: job done, stopped, or on its way back to its dock or station.",
+        "fr": "Un robot a fini son travail : terminé, arrêté, ou en route vers sa base ou sa station."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Robot",
+            "fr": "Robot"
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "name",
+          "type": "string",
+          "label": {
+            "en": "Robot name",
+            "fr": "Nom du robot"
+          }
+        }
+      ]
+    },
+    {
+      "key": "robot_docked",
+      "label": {
+        "en": "Robot back on its dock",
+        "fr": "Robot revenu sur sa base"
+      },
+      "description": {
+        "en": "A robot is back on its dock or station and charging.",
+        "fr": "Un robot est revenu sur sa base ou sa station et se recharge."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Robot",
+            "fr": "Robot"
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "name",
+          "type": "string",
+          "label": {
+            "en": "Robot name",
+            "fr": "Nom du robot"
+          }
+        }
+      ]
+    },
+    {
+      "key": "robot_error",
+      "label": {
+        "en": "Robot error",
+        "fr": "Erreur du robot"
+      },
+      "description": {
+        "en": "A robot reported a new error: stuck, brush blocked, dust bin full...",
+        "fr": "Un robot a signalé une nouvelle erreur : coincé, brosse bloquée, bac plein..."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Robot",
+            "fr": "Robot"
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "name",
+          "type": "string",
+          "label": {
+            "en": "Robot name",
+            "fr": "Nom du robot"
+          }
+        },
+        {
+          "key": "code",
+          "type": "number",
+          "label": {
+            "en": "Error code",
+            "fr": "Code d'erreur"
+          }
+        },
+        {
+          "key": "message",
+          "type": "string",
+          "label": {
+            "en": "Error message (English)",
+            "fr": "Message d'erreur (anglais)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "consumable_low",
+      "label": {
+        "en": "Consumable worn out",
+        "fr": "Consommable usé"
+      },
+      "description": {
+        "en": "A brush, filter or blade went down to 10 % of its life or less.",
+        "fr": "Une brosse, un filtre ou une lame est descendu à 10 % de sa durée de vie ou moins."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Robot",
+            "fr": "Robot"
+          }
+        },
+        {
+          "key": "consumable",
+          "type": "multi_select",
+          "label": {
+            "en": "Consumable",
+            "fr": "Consommable"
+          },
+          "options": [
+            {
+              "value": "main-brush",
+              "label": {
+                "en": "Main brush",
+                "fr": "Brosse principale"
+              }
+            },
+            {
+              "value": "side-brush",
+              "label": {
+                "en": "Side brush",
+                "fr": "Brosse latérale"
+              }
+            },
+            {
+              "value": "filter",
+              "label": {
+                "en": "Filter",
+                "fr": "Filtre"
+              }
+            },
+            {
+              "value": "blade",
+              "label": {
+                "en": "Blades",
+                "fr": "Lames"
+              }
+            },
+            {
+              "value": "lens-brush",
+              "label": {
+                "en": "Camera lens brush",
+                "fr": "Brosse de caméra"
+              }
+            }
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "key": "name",
+          "type": "string",
+          "label": {
+            "en": "Robot name",
+            "fr": "Nom du robot"
+          }
+        },
+        {
+          "key": "consumable_name",
+          "type": "string",
+          "label": {
+            "en": "Consumable (English)",
+            "fr": "Consommable (anglais)"
+          }
+        },
+        {
+          "key": "percent",
+          "type": "number",
+          "label": {
+            "en": "Life left (%)",
+            "fr": "Durée de vie restante (%)"
+          }
+        }
+      ]
+    }
+  ],
+  "scene_actions": [
+    {
+      "key": "start_robot",
+      "label": {
+        "en": "Start a robot",
+        "fr": "Démarrer un robot"
+      },
+      "description": {
+        "en": "Starts cleaning or mowing, or resumes after a pause.",
+        "fr": "Lance le nettoyage ou la tonte, ou reprend après une pause."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Robot",
+            "fr": "Robot"
+          },
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "key": "sent",
+          "type": "boolean",
+          "label": {
+            "en": "Order taken",
+            "fr": "Ordre pris"
+          }
+        }
+      ]
+    },
+    {
+      "key": "pause_robot",
+      "label": {
+        "en": "Pause a robot",
+        "fr": "Mettre un robot en pause"
+      },
+      "description": {
+        "en": "Pauses the current cleaning or mowing.",
+        "fr": "Met en pause le nettoyage ou la tonte en cours."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Robot",
+            "fr": "Robot"
+          },
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "key": "sent",
+          "type": "boolean",
+          "label": {
+            "en": "Order taken",
+            "fr": "Ordre pris"
+          }
+        }
+      ]
+    },
+    {
+      "key": "stop_robot",
+      "label": {
+        "en": "Stop a robot",
+        "fr": "Arrêter un robot"
+      },
+      "description": {
+        "en": "Stops the current job; the robot stays where it is.",
+        "fr": "Arrête le travail en cours ; le robot reste où il est."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Robot",
+            "fr": "Robot"
+          },
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "key": "sent",
+          "type": "boolean",
+          "label": {
+            "en": "Order taken",
+            "fr": "Ordre pris"
+          }
+        }
+      ]
+    },
+    {
+      "key": "return_to_dock",
+      "label": {
+        "en": "Send a robot back to its dock",
+        "fr": "Renvoyer un robot à sa base"
+      },
+      "description": {
+        "en": "The robot goes back to its dock or station.",
+        "fr": "Le robot retourne à sa base ou à sa station."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Robot",
+            "fr": "Robot"
+          },
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "key": "sent",
+          "type": "boolean",
+          "label": {
+            "en": "Order taken",
+            "fr": "Ordre pris"
+          }
+        }
+      ]
+    },
+    {
+      "key": "locate_robot",
+      "label": {
+        "en": "Locate a robot",
+        "fr": "Localiser un robot"
+      },
+      "description": {
+        "en": "The robot plays its \"I'm here\" sound.",
+        "fr": "Le robot joue son son « Je suis ici »."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Robot",
+            "fr": "Robot"
+          },
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "key": "located",
+          "type": "boolean",
+          "label": {
+            "en": "Robot answered",
+            "fr": "Le robot a répondu"
+          }
+        }
+      ]
+    }
+  ],
+  "widgets": [
+    {
+      "key": "robot",
+      "label": {
+        "en": "Ecovacs robot",
+        "fr": "Robot Ecovacs"
+      },
+      "description": {
+        "en": "State, battery, error and consumables of a robot, with control buttons.",
+        "fr": "État, batterie, erreur et consommables d'un robot, avec boutons de commande."
+      },
+      "icon": "disc",
+      "settings": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Robot",
+            "fr": "Robot"
+          },
+          "required": true
+        }
+      ],
+      "action_timeout_seconds": 30
+    }
+  ]
+}
