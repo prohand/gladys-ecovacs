@@ -9,7 +9,8 @@
 # Result: an image pushed to the GitHub Container Registry (ghcr.io), for
 # linux/amd64 AND linux/arm64 (Raspberry Pi, etc.).
 #
-# Manual runs tag the image with the branch name (or the `image-tag` input)
+# Manual runs (Actions -> Build and publish image -> "Run workflow") tag the
+# image with the branch name (or the `image-tag` input)
 # and never touch `latest`. Release builds tag `:<version>` AND `:latest`.
 #
 # That is ALL it takes to "publish": tag, push, and the decentralized indexer
