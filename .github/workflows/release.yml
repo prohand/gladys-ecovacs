@@ -109,8 +109,10 @@ jobs:
           git commit -m "chore(release): ${VERSION}"
           git tag -a "v${VERSION}" -m "Release ${VERSION}"
 
-          git push origin "HEAD:${GITHUB_REF_NAME}"
-          git push origin "v${VERSION}"
+          # One atomic push: if GitHub refuses the tag, the branch is not
+          # bumped either, and the next run releases the same version again
+          # instead of burning one (1.1.0 was lost this way).
+          git push --atomic origin "HEAD:${GITHUB_REF_NAME}" "v${VERSION}"
 
   # Build and publish the image for the version we just tagged.
   build:
