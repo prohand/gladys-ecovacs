@@ -10,6 +10,10 @@ the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-11
+
+- Maintenance release, no functional change.
+
 ## [1.1.0] - 2026-10-11
 
 ### Fixed
@@ -50,6 +54,7 @@ the version's GitHub Release.
   multi-arch build, GitHub releases and Dependabot, as in gladys-devmel.
 - `SECURITY.md`, `CHANGELOG.md` and `CLAUDE.md`.
 
-[Unreleased]: https://github.com/prohand/gladys-ecovacs/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/prohand/gladys-ecovacs/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/prohand/gladys-ecovacs/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/prohand/gladys-ecovacs/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/prohand/gladys-ecovacs/releases/tag/v1.0.1

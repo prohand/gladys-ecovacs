@@ -6,8 +6,8 @@
     "en": "Control Ecovacs Deebot robot vacuums and GOAT mowers: start, dock, battery, errors.",
     "fr": "Pilotez les aspirateurs Ecovacs Deebot et tondeuses GOAT : départ, base, batterie."
   },
-  "version": "1.1.0",
-  "docker_image": "ghcr.io/prohand/gladys-ecovacs:1.1.0",
+  "version": "1.2.0",
+  "docker_image": "ghcr.io/prohand/gladys-ecovacs:1.2.0",
   "gladys_version": ">=5.1.0",
   "cover_image": "https://raw.githubusercontent.com/prohand/gladys-ecovacs/main/cover.png",
   "categories": ["appliances"],
