@@ -17,7 +17,10 @@ import {
   CLIENT_KEY,
   CLIENT_SECRET,
   IOT_QUERY_VERSION,
+  PUBLIC_KEY_CONFIG,
   REALM,
+  VERIFY_DEVICE_MODEL,
+  encryptAccount,
   endpoints,
   md5,
   sign,
@@ -28,6 +31,11 @@ const USER_AGENT = 'Dalvik/2.1.0 (Linux; U; Android 5.1.1; A5010 Build/LMY48Z)';
 
 // Login answers meaning "wrong account or password".
 const BAD_CREDENTIALS_CODES = new Set(['1005', '1010']);
+// "Please update to the latest version": this client id must be confirmed
+// with a code sent by email (or the app version is too old).
+const DEVICE_VERIFICATION_CODE = '1013';
+// The emailed code is wrong or expired.
+const BAD_VERIFY_CODE = '1012';
 
 // After a failed login that was NOT a credentials problem (network, cloud
 // down), wait this long before trying again: every poll asks for a session.
@@ -36,6 +44,9 @@ const LOGIN_RETRY_DELAY_MS = 60_000;
 /**
  * kind:
  *  - 'credentials': wrong email or password (no retry until the config changes)
+ *  - 'verification': Ecovacs wants this client confirmed by an emailed code
+ *                    (no retry until the user does it)
+ *  - 'code':        the emailed code is wrong or expired
  *  - 'auth':        session refused (renewed once, transparently)
  *  - 'offline':     the robot did not answer (switched off, out of Wi-Fi)
  *  - 'network':     the Ecovacs cloud could not be reached
@@ -105,7 +116,9 @@ export class EcovacsClient {
     }
     if (this.loginFailure) {
       const { error, at } = this.loginFailure;
-      if (error.kind === 'credentials' || this.now() - at < LOGIN_RETRY_DELAY_MS) {
+      // Both wait for the user: retrying only piles up refused logins.
+      const final = error.kind === 'credentials' || error.kind === 'verification';
+      if (final || this.now() - at < LOGIN_RETRY_DELAY_MS) {
         throw error;
       }
     }
@@ -120,60 +133,98 @@ export class EcovacsClient {
 
   async login() {
     try {
-      const login = await this.signedGet(
-        this.urls.login(this.deviceId),
-        {
-          account: this.email,
-          password: this.passwordHash,
-          requestId: md5(String(this.now())),
-          authTimespan: this.now(),
-          authTimeZone: 'GMT-8',
-        },
-        { ...APP_META, country: this.country.toLowerCase(), deviceId: this.deviceId },
-        CLIENT_KEY,
-        CLIENT_SECRET,
-      );
-
-      const auth = await this.signedGet(
-        this.urls.authCode,
-        {
-          uid: login.uid,
-          accessToken: login.accessToken,
-          bizType: 'ECOVACS_IOT',
-          deviceId: this.deviceId,
-          authTimespan: this.now(),
-        },
-        { openId: 'global' },
-        AUTH_CLIENT_KEY,
-        AUTH_CLIENT_SECRET,
-      );
-
-      const china = this.country === 'CN';
-      const portal = await this.post(`${this.urls.portal}/users/user.do`, {
-        todo: 'loginByItToken',
-        edition: 'ECOGLOBLE',
-        userId: login.uid,
-        token: auth.authCode,
-        realm: REALM,
-        resource: this.resource,
-        org: china ? 'ECOCN' : 'ECOWW',
-        last: '',
-        country: china ? 'Chinese' : this.country,
+      const login = await this.privateGet('user/login', {
+        account: this.email,
+        password: this.passwordHash,
       });
-      if (portal.result !== 'ok' || !portal.token) {
-        throw new EcovacsError(`Ecovacs portal refused the login: ${portal.error ?? 'no token'}`, {
-          kind: 'api',
-          code: portal.errno,
-        });
-      }
-
-      this.session = { userId: portal.userId ?? login.uid, token: portal.token };
-      this.loginFailure = null;
-      return this.session;
+      return await this.openSession(login);
     } catch (err) {
       this.loginFailure = { error: err, at: this.now() };
       throw err;
     }
+  }
+
+  /**
+   * Device verification, step 1: Ecovacs mails a one-time code to the
+   * account. Asked by the user (Configuration action), never automatically.
+   */
+  async requestVerificationCode() {
+    await this.privateGet('user/sendEmailVerifyCode', {
+      encryptEmail: await this.encryptedAccount(),
+      verifyType: 'EMAIL_VERIFY_DEVICE',
+      supportChar: 'N',
+      isForce: 'N',
+    });
+  }
+
+  /**
+   * Device verification, step 2: send the emailed code back. Ecovacs answers
+   * like user/login, so the session opens right away; a new login straight
+   * after the verification is refused for some accounts, the session is kept.
+   * @param {string} code as received by email
+   */
+  async verifyDevice(code) {
+    const login = await this.privateGet('user/verifyDevice', {
+      encryptAccount: await this.encryptedAccount(),
+      backUpEmail: '',
+      verifyCode: String(code ?? '').trim(),
+      ...VERIFY_DEVICE_MODEL,
+    });
+    return this.openSession(login);
+  }
+
+  async encryptedAccount() {
+    const config = await this.privateGet('common/getConfig', { keys: PUBLIC_KEY_CONFIG });
+    const entry = Array.isArray(config) ? config.find((e) => e?.key === PUBLIC_KEY_CONFIG) : null;
+    try {
+      return encryptAccount(this.email, JSON.parse(entry.value).publicKey);
+    } catch {
+      throw new EcovacsError('Ecovacs sent no usable public key', { kind: 'api' });
+    }
+  }
+
+  // Steps 2 and 3 of the login chain, from the uid + accessToken of
+  // user/login (or user/verifyDevice).
+  async openSession(login) {
+    if (!login?.uid || !login?.accessToken) {
+      throw new EcovacsError('Ecovacs login answer without a token', { kind: 'api' });
+    }
+    const auth = await this.signedGet(
+      this.urls.authCode,
+      {
+        uid: login.uid,
+        accessToken: login.accessToken,
+        bizType: 'ECOVACS_IOT',
+        deviceId: this.deviceId,
+        authTimespan: this.now(),
+      },
+      { openId: 'global' },
+      AUTH_CLIENT_KEY,
+      AUTH_CLIENT_SECRET,
+    );
+
+    const china = this.country === 'CN';
+    const portal = await this.post(`${this.urls.portal}/users/user.do`, {
+      todo: 'loginByItToken',
+      edition: 'ECOGLOBLE',
+      userId: login.uid,
+      token: auth.authCode,
+      realm: REALM,
+      resource: this.resource,
+      org: china ? 'ECOCN' : 'ECOWW',
+      last: '',
+      country: china ? 'Chinese' : this.country,
+    });
+    if (portal.result !== 'ok' || !portal.token) {
+      throw new EcovacsError(`Ecovacs portal refused the login: ${portal.error ?? 'no token'}`, {
+        kind: 'api',
+        code: portal.errno,
+      });
+    }
+
+    this.session = { userId: portal.userId ?? login.uid, token: portal.token };
+    this.loginFailure = null;
+    return this.session;
   }
 
   logout() {
@@ -277,6 +328,23 @@ export class EcovacsClient {
 
   // --- HTTP ------------------------------------------------------------------
 
+  // A signed call of the app API: the app meta is part of the URL and of the
+  // signature, every call carries a request id and a timestamp.
+  async privateGet(endpoint, params) {
+    return this.signedGet(
+      this.urls.privateApi(this.deviceId, endpoint),
+      {
+        ...params,
+        requestId: md5(String(this.now())),
+        authTimespan: this.now(),
+        authTimeZone: 'GMT-8',
+      },
+      { ...APP_META, country: this.country.toLowerCase(), deviceId: this.deviceId },
+      CLIENT_KEY,
+      CLIENT_SECRET,
+    );
+  }
+
   async signedGet(url, params, signOnly, key, secret) {
     const query = new URLSearchParams(
       Object.entries(sign(params, signOnly, key, secret)).map(([k, v]) => [k, String(v)]),
@@ -287,7 +355,7 @@ export class EcovacsClient {
     }
     const code = String(answer.code);
     throw new EcovacsError(`Ecovacs login refused (${code}): ${answer.msg ?? 'unknown error'}`, {
-      kind: BAD_CREDENTIALS_CODES.has(code) ? 'credentials' : 'api',
+      kind: loginErrorKind(code),
       code,
     });
   }
@@ -323,6 +391,16 @@ export class EcovacsClient {
       throw new EcovacsError('Ecovacs cloud sent an unreadable answer', { kind: 'network' });
     }
   }
+}
+
+function loginErrorKind(code) {
+  if (BAD_CREDENTIALS_CODES.has(code)) {
+    return 'credentials';
+  }
+  if (code === DEVICE_VERIFICATION_CODE) {
+    return 'verification';
+  }
+  return code === BAD_VERIFY_CODE ? 'code' : 'api';
 }
 
 // The portal says "token refused" or "robot did not answer" with `ret` or

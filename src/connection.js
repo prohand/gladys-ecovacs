@@ -9,6 +9,11 @@ export const NOT_CONFIGURED = {
   fr: 'Renseignez l’e-mail et le mot de passe de votre compte Ecovacs Home.',
 };
 
+export const CODE_SENT = {
+  en: 'Ecovacs sent a code by email to the account (check the spam folder too). Enter it in "Confirm the device".',
+  fr: 'Ecovacs a envoyé un code par e-mail au compte (regardez aussi dans les spams). Saisissez-le dans « Confirmer l’appareil ».',
+};
+
 /** What went wrong, for the user. */
 export function failureMessage(err) {
   switch (err?.kind) {
@@ -16,6 +21,16 @@ export function failureMessage(err) {
       return {
         en: 'Ecovacs refused the email or password. Check them, and the country of the account.',
         fr: 'Ecovacs a refusé l’e-mail ou le mot de passe. Vérifiez-les, ainsi que le pays du compte.',
+      };
+    case 'verification':
+      return {
+        en: 'Ecovacs asks to confirm Gladys as a new device: click "Send the verification code", then enter the code received by email in "Confirm the device".',
+        fr: 'Ecovacs demande de confirmer Gladys comme nouvel appareil : cliquez sur « Envoyer le code de vérification », puis saisissez le code reçu par e-mail dans « Confirmer l’appareil ».',
+      };
+    case 'code':
+      return {
+        en: 'Ecovacs refused the verification code (wrong or expired). Ask for a new one.',
+        fr: 'Ecovacs a refusé le code de vérification (faux ou expiré). Demandez-en un nouveau.',
       };
     case 'network':
       return {
@@ -28,6 +43,15 @@ export function failureMessage(err) {
         fr: `Ecovacs a refusé la connexion : ${err?.message ?? 'erreur inconnue'}`,
       };
   }
+}
+
+/**
+ * An error for a Configuration action: the screen shows it as a failure (in
+ * red) instead of a result. The SDK carries a plain text there, not a
+ * multi-language object, so both languages go in.
+ */
+export function actionError(message) {
+  return new Error(message.en === message.fr ? message.en : `${message.en} / ${message.fr}`);
 }
 
 /** Result of a successful connection: the robots found. */

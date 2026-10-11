@@ -33,3 +33,16 @@ test('rolling the same version twice changes nothing', () => {
   const once = rollChangelog(BASE, '1.0.1', '2026-10-10');
   assert.equal(rollChangelog(once, '1.0.1', '2026-10-11'), once);
 });
+
+test('a heading quoted in the introduction is not the section', () => {
+  const text = BASE.replace(
+    '# Changelog\n',
+    '# Changelog\n\nDescribe each change under `## [Unreleased]` as you make it.\n',
+  );
+  const rolled = rollChangelog(text, '1.0.1', '2026-10-10');
+  assert.match(rolled, /under `## \[Unreleased\]` as you make it\./);
+  assert.match(
+    rolled,
+    /## \[Unreleased\]\n\n## \[1\.0\.1\] - 2026-10-10\n\n### Added\n\n- Something\./,
+  );
+});

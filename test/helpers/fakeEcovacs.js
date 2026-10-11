@@ -7,7 +7,11 @@
 // request returning a raw portal answer).
 // -----------------------------------------------------------------------------
 
-import { createHash } from 'node:crypto';
+import { constants, createHash, generateKeyPairSync, privateDecrypt } from 'node:crypto';
+
+// The RSA key pair of the fake cloud (common/getConfig publishes the public half).
+const KEYS = generateKeyPairSync('rsa', { modulusLength: 1024 });
+const PUBLIC_KEY = KEYS.publicKey.export({ format: 'der', type: 'spki' }).toString('base64');
 
 export const ROBOT_T8 = {
   did: 'e0000001',
@@ -82,7 +86,11 @@ export function offline() {
   return () => ({ ret: 'fail', errno: 500, error: 'wait for response timed out' });
 }
 
-export function createFakeEcovacs({ devices = [ROBOT_T8], password = 'secret' } = {}) {
+export function createFakeEcovacs({
+  devices = [ROBOT_T8],
+  email = 'me@example.com',
+  password = 'secret',
+} = {}) {
   const requests = [];
   const robots = {};
   for (const device of devices) {
@@ -94,6 +102,10 @@ export function createFakeEcovacs({ devices = [ROBOT_T8], password = 'secret' } 
     expiredTokenCalls: 0,
     tokens: 0,
     networkDown: false,
+    // false: user/login answers 1013 until user/verifyDevice gets the code.
+    verified: true,
+    verifyCode: '123456',
+    codesSent: 0,
   };
 
   async function fetch(url, init = {}) {
@@ -111,10 +123,36 @@ export function createFakeEcovacs({ devices = [ROBOT_T8], password = 'secret' } 
       if (state.loginCode !== '0000') {
         return { code: state.loginCode, msg: 'login failed' };
       }
+      if (!state.verified) {
+        return { code: '1013', msg: 'Please update to the latest version to continue' };
+      }
       const md5 = url.searchParams.get('password');
       return md5 === md5Of(password)
         ? { code: '0000', data: { uid: 'uid42', accessToken: 'access-token' } }
         : { code: '1005', msg: 'wrong password' };
+    }
+    if (url.pathname.endsWith('/common/getConfig')) {
+      return {
+        code: '0000',
+        data: [{ key: 'PUBLIC.KEY.CONFIG', value: JSON.stringify({ publicKey: PUBLIC_KEY }) }],
+      };
+    }
+    if (url.pathname.endsWith('/user/sendEmailVerifyCode')) {
+      if (decrypt(url.searchParams.get('encryptEmail')) !== email) {
+        return { code: '1005', msg: 'unknown account' };
+      }
+      state.codesSent += 1;
+      return { code: '0000', data: { verifyId: 'verify-1' } };
+    }
+    if (url.pathname.endsWith('/user/verifyDevice')) {
+      if (
+        decrypt(url.searchParams.get('encryptAccount')) !== email ||
+        url.searchParams.get('verifyCode') !== state.verifyCode
+      ) {
+        return { code: '1012', msg: 'verification code error' };
+      }
+      state.verified = true;
+      return { code: '0000', data: { uid: 'uid42', accessToken: 'access-token' } };
     }
     if (url.pathname.endsWith('/auth/getAuthCode')) {
       return { code: '0000', data: { authCode: 'auth-code', ecovacsUid: 'uid42' } };
@@ -163,6 +201,16 @@ export function createFakeEcovacs({ devices = [ROBOT_T8], password = 'secret' } 
 
 function json(payload) {
   return { ok: true, status: 200, json: async () => payload };
+}
+
+// Raw RSA, then the PKCS#1 v1.5 padding (00 02 <random> 00 <message>) is
+// stripped by hand: some Node builds refuse PKCS#1 padding for decryption.
+function decrypt(base64) {
+  const block = privateDecrypt(
+    { key: KEYS.privateKey, padding: constants.RSA_NO_PADDING },
+    Buffer.from(base64 ?? '', 'base64'),
+  );
+  return block.subarray(block.indexOf(0, 2) + 1).toString();
 }
 
 function md5Of(text) {

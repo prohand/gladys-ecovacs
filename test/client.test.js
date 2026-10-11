@@ -36,11 +36,14 @@ test('sign: md5 of key, sorted key=value pairs and secret', () => {
 test('endpoints: worldwide portal, China on its own cloud', () => {
   const fr = endpoints('FR');
   assert.equal(fr.portal, 'https://portal-ww.ecouser.net/api');
-  assert.match(fr.login('abc'), /^https:\/\/gl-fr-api\.ecovacs\.com\/v1\/private\/fr\/EN\/abc\//);
+  assert.match(
+    fr.privateApi('abc', 'user/login'),
+    /^https:\/\/gl-fr-api\.ecovacs\.com\/v1\/private\/fr\/EN\/abc\/global_e\/3\.14\.0\/.*\/user\/login$/,
+  );
   assert.equal(fr.authCode, 'https://gl-fr-openapi.ecovacs.com/v1/global/auth/getAuthCode');
   const cn = endpoints('cn');
   assert.equal(cn.portal, 'https://portal.ecouser.net/api');
-  assert.match(cn.login('abc'), /^https:\/\/gl-cn-api\.ecovacs\.cn\//);
+  assert.match(cn.privateApi('abc', 'user/login'), /^https:\/\/gl-cn-api\.ecovacs\.cn\//);
 });
 
 test('login: three signed steps, password sent as md5 only', async () => {
@@ -60,7 +63,7 @@ test('login: three signed steps, password sent as md5 only', async () => {
     {
       lang: 'EN',
       appCode: 'global_e',
-      appVersion: '1.6.3',
+      appVersion: '3.14.0',
       channel: 'google_play',
       deviceType: '1',
       country: 'fr',
@@ -101,6 +104,42 @@ test('wrong password: credentials error, never retried', async () => {
   advance(3_600_000);
   await assert.rejects(client.ensureSession(), { kind: 'credentials' });
   assert.equal(fake.requests.length, 1, 'one login attempt only');
+});
+
+test('unconfirmed client: verification error, never retried on its own', async () => {
+  const fake = createFakeEcovacs();
+  fake.state.verified = false;
+  const { client, advance } = makeClient(fake);
+  await assert.rejects(client.ensureSession(), { kind: 'verification', code: '1013' });
+  advance(3_600_000);
+  await assert.rejects(client.ensureSession(), { kind: 'verification' });
+  assert.equal(fake.requests.length, 1, 'one login attempt only');
+});
+
+test('device verification: emailed code, then the session opens at once', async () => {
+  const fake = createFakeEcovacs();
+  fake.state.verified = false;
+  const { client } = makeClient(fake);
+  await assert.rejects(client.ensureSession(), { kind: 'verification' });
+
+  await client.requestVerificationCode();
+  assert.equal(fake.state.codesSent, 1);
+  const sent = fake.requests.find((r) => r.url.pathname.endsWith('/user/sendEmailVerifyCode'));
+  assert.ok(!sent.url.href.includes('example.com'), 'the account leaves encrypted only');
+  assert.equal(sent.url.searchParams.get('verifyType'), 'EMAIL_VERIFY_DEVICE');
+
+  await assert.rejects(client.verifyDevice('000000'), { kind: 'code', code: '1012' });
+  const session = await client.verifyDevice(' 123456 ');
+  assert.deepEqual(session, { userId: 'uid42', token: 'iot-token-1' });
+  assert.equal(client.loginFailure, null);
+
+  const logins = fake.requests.filter((r) => r.url.pathname.endsWith('/user/login')).length;
+  assert.deepEqual(await client.ensureSession(), session);
+  assert.equal(
+    fake.requests.filter((r) => r.url.pathname.endsWith('/user/login')).length,
+    logins,
+    'no new login right after the verification',
+  );
 });
 
 test('cloud unreachable: network error, login retried after a pause', async () => {

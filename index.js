@@ -16,7 +16,13 @@ import { EcovacsClient } from './src/ecovacs/client.js';
 import { Fleet } from './src/devices/index.js';
 import { SCENE_ACTIONS } from './src/capabilities/scenes.js';
 import { WIDGETS } from './src/capabilities/widget.js';
-import { NOT_CONFIGURED, failureMessage, successMessage } from './src/connection.js';
+import {
+  CODE_SENT,
+  NOT_CONFIGURED,
+  actionError,
+  failureMessage,
+  successMessage,
+} from './src/connection.js';
 
 const gladys = new GladysIntegration();
 const fleet = new Fleet(gladys);
@@ -45,13 +51,14 @@ function cancelRetry() {
 
 /**
  * Open the account, read the robots and publish them. Reports the outcome as
- * the connection status, and returns the message for the user.
+ * the connection status, and returns it with the message for the user.
+ * @returns {Promise<{ connected: boolean, message: object }>}
  */
 async function connectCloud() {
   cancelRetry();
   if (!isConfigured(config)) {
     await gladys.setConnectionStatus(false, NOT_CONFIGURED);
-    return NOT_CONFIGURED;
+    return { connected: false, message: NOT_CONFIGURED };
   }
   try {
     const robots = await fleet.refresh();
@@ -60,18 +67,22 @@ async function connectCloud() {
     // The robot list may have changed, and nudges sent while the socket was
     // down were dropped: re-sync the open dashboards.
     fleet.refreshWidget();
-    return successMessage(fleet.client.account, robots, fleet.unsupported);
+    return {
+      connected: true,
+      message: successMessage(fleet.client.account, robots, fleet.unsupported),
+    };
   } catch (err) {
     logger.error(`Ecovacs connection failed for ${fleet.client.account}: ${err.message}`);
     const message = failureMessage(err);
     await gladys.setConnectionStatus(false, message).catch(() => {});
     // Wrong credentials stay wrong until the user changes them (which
-    // reconnects): retrying would only risk locking the account.
-    if (err.kind !== 'credentials') {
+    // reconnects): retrying would only risk locking the account. Same for a
+    // device verification, which waits for the emailed code.
+    if (err.kind !== 'credentials' && err.kind !== 'verification') {
       retryTimer = setTimeout(() => connectCloud().catch(() => {}), RETRY_DELAY_MS);
       retryTimer.unref?.();
     }
-    return message;
+    return { connected: false, message };
   }
 }
 
@@ -96,7 +107,45 @@ gladys.onAction('test_connection', async () => {
   // A deliberate test bypasses the pause after a failed login.
   fleet.client.loginFailure = null;
   fleet.client.logout();
-  return connectCloud();
+  const { connected, message } = await connectCloud();
+  if (!connected) {
+    throw actionError(message);
+  }
+  return message;
+});
+
+// Device verification asked by Ecovacs (login code 1013): one action mails
+// the code, the other sends it back and opens the session.
+gladys.onAction('send_verification_code', async () => {
+  if (!isConfigured(config)) {
+    throw actionError(NOT_CONFIGURED);
+  }
+  try {
+    await fleet.client.requestVerificationCode();
+  } catch (err) {
+    logger.error(`Ecovacs verification code not sent for ${fleet.client.account}: ${err.message}`);
+    throw actionError(failureMessage(err));
+  }
+  logger.info(`Ecovacs verification code sent to ${fleet.client.account}`);
+  return CODE_SENT;
+});
+
+gladys.onAction('verify_device', async (fields) => {
+  if (!isConfigured(config)) {
+    throw actionError(NOT_CONFIGURED);
+  }
+  try {
+    await fleet.client.verifyDevice(fields.code);
+  } catch (err) {
+    logger.error(`Ecovacs device verification failed for ${fleet.client.account}: ${err.message}`);
+    throw actionError(failureMessage(err));
+  }
+  logger.info(`Ecovacs device verified for ${fleet.client.account}`);
+  const { connected, message } = await connectCloud();
+  if (!connected) {
+    throw actionError(message);
+  }
+  return message;
 });
 
 gladys.onAction('locate', async (fields) => {

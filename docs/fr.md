@@ -26,6 +26,20 @@ accès Internet, et le robot doit être visible dans l'application.
    les robots trouvés.
 5. Ouvrez l'onglet **Découverte** et ajoutez vos robots.
 
+### Vérification de l'appareil
+
+Ecovacs peut demander de confirmer Gladys comme nouvel appareil (le message
+l'indique, le cloud répond le code 1013 « Please update to the latest
+version ») :
+
+1. Cliquez sur **Envoyer le code de vérification** : Ecovacs envoie un code
+   par e-mail au compte (regardez aussi dans les spams).
+2. Saisissez-le dans **Confirmer l'appareil** et cliquez : les robots sont
+   listés.
+
+Gladys garde le même identifiant d'appareil pour le compte, même après un
+redémarrage.
+
 Le mot de passe n'est jamais envoyé en clair : seule son empreinte MD5 part
 vers Ecovacs, comme le fait l'application.
 
@@ -48,6 +62,8 @@ Un badge **cloud** s'affiche sur la carte du robot quand il répond, et
 ## Actions
 
 - **Tester la connexion** : se connecte au compte et liste les robots trouvés.
+- **Envoyer le code de vérification** / **Confirmer l'appareil** :
+  vérification de l'appareil, quand Ecovacs la demande (voir plus haut).
 - **Localiser un robot** : le robot joue son son « Je suis ici ».
 
 ## Scènes (Gladys 5.1 ou plus récent)
@@ -135,6 +151,11 @@ aucune requête au cloud Ecovacs.
   l'application, et surtout le **pays du compte**. Après ce refus,
   l'intégration ne réessaie plus seule (pour ne pas bloquer le compte) :
   corrigez la configuration ou cliquez sur **Tester la connexion**.
+- **« Ecovacs demande de confirmer Gladys comme nouvel appareil »** : suivez
+  la [vérification de l'appareil](#vérification-de-lappareil). L'intégration
+  ne réessaie pas seule d'ici là.
+- **« Ecovacs a refusé le code de vérification »** : le code est faux ou trop
+  ancien ; demandez-en un nouveau.
 - **« Le cloud Ecovacs est injoignable »** : vérifiez l'accès Internet de
   Gladys. L'intégration réessaie toutes les 5 minutes.
 - **Le robot est injoignable** : il est éteint ou hors Wi-Fi ; vérifiez qu'il
