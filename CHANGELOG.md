@@ -10,6 +10,8 @@ the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-11
+
 ### Fixed
 
 - Login refused with code 1013 ("Please update to the latest version"): the
@@ -48,5 +50,6 @@ the version's GitHub Release.
   multi-arch build, GitHub releases and Dependabot, as in gladys-devmel.
 - `SECURITY.md`, `CHANGELOG.md` and `CLAUDE.md`.
 
-[Unreleased]: https://github.com/prohand/gladys-ecovacs/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/prohand/gladys-ecovacs/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/prohand/gladys-ecovacs/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/prohand/gladys-ecovacs/releases/tag/v1.0.1
