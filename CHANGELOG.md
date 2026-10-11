@@ -4,15 +4,25 @@ All notable changes to this integration are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [semantic versioning](https://semver.org/), bumped by the Release workflow.
 
-Describe each change under `## [Unreleased]
-
-## [1.0.1] - 2026-10-10
-
-` as you make it. The Release workflow
+Describe each change under `## [Unreleased]` as you make it. The Release workflow
 moves that section under the version it ships, and the section becomes the notes of
 the version's GitHub Release.
 
 ## [Unreleased]
+
+### Fixed
+
+- Login refused with code 1013 ("Please update to the latest version"): the
+  integration now presents itself as a recent Ecovacs Home app, and supports
+  the device verification Ecovacs asks for since July 2026 — new actions
+  "Send the verification code" and "Confirm the device" (code received by
+  email). No automatic retry while the verification waits.
+- "Test the connection" shows a failure as an error (in red) instead of a
+  success message.
+- The Release workflow no longer mistakes the `## [Unreleased]` quoted in the
+  changelog introduction for the section heading.
+
+## [1.0.1] - 2026-10-10
 
 ### Added
 

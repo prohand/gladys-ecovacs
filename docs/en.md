@@ -26,6 +26,17 @@ Internet access, and the robot must show up in the app.
    found.
 5. Open the **Discover** tab and add your robots.
 
+### Device verification
+
+Ecovacs may ask to confirm Gladys as a new device (the message says so, the
+cloud answers code 1013 "Please update to the latest version"):
+
+1. Click **Send the verification code**: Ecovacs mails a code to the account
+   (look in the spam folder too).
+2. Enter it in **Confirm the device** and click: the robots are listed.
+
+Gladys keeps the same device id for the account, even after a restart.
+
 The password is never sent in clear text: only its MD5 fingerprint goes to
 Ecovacs, as the app does.
 
@@ -48,6 +59,8 @@ when it no longer does (switched off, out of Wi-Fi).
 ## Actions
 
 - **Test the connection**: signs in and lists the robots found.
+- **Send the verification code** / **Confirm the device**: device
+  verification, when Ecovacs asks for it (see above).
 - **Locate a robot**: the robot plays its "I'm here" sound.
 
 ## Scenes (Gladys 5.1 or later)
@@ -130,6 +143,11 @@ to the Ecovacs cloud.
   above all the **country of the account**. After such a refusal the
   integration stops retrying on its own (so as not to lock the account): fix
   the configuration or click **Test the connection**.
+- **"Ecovacs asks to confirm Gladys as a new device"**: follow
+  [Device verification](#device-verification). The integration does not retry
+  on its own until then.
+- **"Ecovacs refused the verification code"**: the code is wrong or too old;
+  ask for a new one.
 - **"The Ecovacs cloud cannot be reached"**: check the Internet access of
   Gladys. The integration retries every 5 minutes.
 - **The robot is unreachable**: it is switched off or out of Wi-Fi; check it

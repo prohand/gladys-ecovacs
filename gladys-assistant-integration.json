@@ -21,8 +21,8 @@
         "fr": "Pour commencer"
       },
       "description": {
-        "en": "Your robots (Deebot vacuums, GOAT mowers) are reached through the Ecovacs cloud, with the account of the Ecovacs Home app: add the robots in the app first, then enter the same email, password and country here. Accounts created with Google, Apple or Facebook sign-in need a password: set one in the app (Profile, account settings).",
-        "fr": "Vos robots (aspirateurs Deebot, tondeuses GOAT) sont joints via le cloud Ecovacs, avec le compte de l'application Ecovacs Home : ajoutez d'abord les robots dans l'application, puis saisissez ici le même e-mail, mot de passe et pays. Un compte créé avec Google, Apple ou Facebook a besoin d'un mot de passe : définissez-en un dans l'application (Profil, paramètres du compte)."
+        "en": "Your robots (Deebot vacuums, GOAT mowers) are reached through the Ecovacs cloud, with the account of the Ecovacs Home app: add the robots in the app first, then enter the same email, password and country here. Accounts created with Google, Apple or Facebook sign-in need a password: set one in the app (Profile, account settings). On the first connection, Ecovacs may ask to confirm Gladys as a new device: \"Send the verification code\" mails you a code, enter it in \"Confirm the device\".",
+        "fr": "Vos robots (aspirateurs Deebot, tondeuses GOAT) sont joints via le cloud Ecovacs, avec le compte de l'application Ecovacs Home : ajoutez d'abord les robots dans l'application, puis saisissez ici le même e-mail, mot de passe et pays. Un compte créé avec Google, Apple ou Facebook a besoin d'un mot de passe : définissez-en un dans l'application (Profil, paramètres du compte). À la première connexion, Ecovacs peut demander de confirmer Gladys comme nouvel appareil : « Envoyer le code de vérification » vous envoie un code par e-mail, saisissez-le dans « Confirmer l'appareil »."
       },
       "links": [
         {
@@ -329,6 +329,33 @@
         "fr": "Tester la connexion"
       },
       "timeout_seconds": 45
+    },
+    {
+      "key": "send_verification_code",
+      "label": {
+        "en": "Send the verification code",
+        "fr": "Envoyer le code de vérification"
+      },
+      "timeout_seconds": 30
+    },
+    {
+      "key": "verify_device",
+      "label": {
+        "en": "Confirm the device",
+        "fr": "Confirmer l'appareil"
+      },
+      "timeout_seconds": 45,
+      "fields": [
+        {
+          "key": "code",
+          "type": "string",
+          "label": {
+            "en": "Code received by email",
+            "fr": "Code reçu par e-mail"
+          },
+          "required": true
+        }
+      ]
     },
     {
       "key": "locate",
