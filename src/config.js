@@ -7,6 +7,8 @@
 // `undefined` or with numbers typed as strings.
 // -----------------------------------------------------------------------------
 
+import { DEVICE_POLL_FREQUENCIES } from '@gladysassistant/integration-sdk';
+
 // Defaults: they MUST stay consistent with the `default` values declared in the
 // manifest `config_schema` (test/manifest.test.js checks it).
 export const DEFAULT_CONFIG = {
@@ -16,13 +18,14 @@ export const DEFAULT_CONFIG = {
   poll_frequency: '60', // seconds, a select: see POLL_FREQUENCIES_MS
 };
 
-// Gladys only accepts these device poll frequencies (in ms): any other value
+// Gladys only accepts the device poll frequencies of DEVICE_POLL_FREQUENCIES
+// (in ms, taken from the SDK, which mirrors the core enum): any other value
 // rejects the WHOLE discovery batch. The select offers a subset; the cloud is
 // asked five questions per robot and per poll, faster than 15 s is abuse.
 export const POLL_FREQUENCIES_MS = {
-  15: 15_000,
-  30: 30_000,
-  60: 60_000,
+  15: DEVICE_POLL_FREQUENCIES.EVERY_15_SECONDS,
+  30: DEVICE_POLL_FREQUENCIES.EVERY_30_SECONDS,
+  60: DEVICE_POLL_FREQUENCIES.EVERY_MINUTES,
 };
 
 /**
