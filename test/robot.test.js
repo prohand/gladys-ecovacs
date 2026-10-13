@@ -4,6 +4,7 @@ import { EcovacsClient } from '../src/ecovacs/client.js';
 import {
   Robot,
   VACUUM_STATE,
+  ERROR_MESSAGES,
   errorMessage,
   lifePercent,
   parseErrorCode,
@@ -65,10 +66,23 @@ test('parseErrorCode: 0 and 100 mean no error', () => {
   assert.equal(parseErrorCode(undefined), 0);
 });
 
-test('errorMessage: bilingual, unknown codes keep their number', () => {
-  assert.deepEqual(errorMessage(105), { en: 'Robot stuck', fr: 'Robot coincé' });
-  assert.deepEqual(errorMessage(9999), { en: 'Error 9999', fr: 'Erreur 9999' });
+test('errorMessage: in four languages, unknown codes keep their number', () => {
+  assert.deepEqual(errorMessage(105), {
+    en: 'Robot stuck',
+    fr: 'Robot coincé',
+    de: 'Roboter festgefahren',
+    es: 'Robot atascado',
+  });
+  assert.deepEqual(errorMessage(9999), {
+    en: 'Error 9999',
+    fr: 'Erreur 9999',
+    de: 'Fehler 9999',
+    es: 'Error 9999',
+  });
   assert.equal(errorMessage(0).en, 'No error');
+  for (const code of [0, ...Object.keys(ERROR_MESSAGES)]) {
+    assert.deepEqual(Object.keys(errorMessage(Number(code))), ['en', 'fr', 'de', 'es'], code);
+  }
 });
 
 test('lifePercent is bounded and tolerates garbage', () => {

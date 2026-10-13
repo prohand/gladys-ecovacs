@@ -173,27 +173,71 @@ test('the manifest version is the package version, and the image is tagged with 
   assert.ok(manifest.docker_image.endsWith(`:${manifest.version}`), manifest.docker_image);
 });
 
+// Every text a user reads comes in the four languages of the Gladys interface.
+const LANGUAGES = ['en', 'fr', 'de', 'es'];
+
 test('the catalog description holds 10 to 100 characters per language', () => {
+  assert.deepEqual(Object.keys(manifest.description), LANGUAGES);
   for (const [lang, text] of Object.entries(manifest.description)) {
     assert.ok(text.length >= 10 && text.length <= 100, `description.${lang}: ${text.length}`);
   }
 });
 
-test('texts are multi-language objects with English and French', () => {
+test('texts are multi-language objects in English, French, German and Spanish', () => {
   const check = (value, where) => {
     assert.equal(typeof value, 'object', where);
-    assert.ok(value.en && value.fr, `${where} needs en and fr`);
+    assert.deepEqual(Object.keys(value), LANGUAGES, `${where} needs ${LANGUAGES.join(', ')}`);
+    for (const lang of LANGUAGES) {
+      assert.ok(typeof value[lang] === 'string' && value[lang].trim(), `${where}.${lang}`);
+    }
   };
   for (const field of allFields) {
     check(field.label, `${field.key}.label`);
     if (field.description) check(field.description, `${field.key}.description`);
     if (field.placeholder) check(field.placeholder, `${field.key}.placeholder`);
+    for (const option of field.options ?? []) check(option.label, `${field.key}.${option.value}`);
+    for (const link of field.links ?? []) check(link.label, `${field.key} link`);
   }
   for (const item of [
     ...(manifest.actions ?? []),
     ...(manifest.scene_triggers ?? []),
     ...(manifest.scene_actions ?? []),
+    ...(manifest.widgets ?? []),
   ]) {
     check(item.label, `${item.key}.label`);
+    if (item.description) check(item.description, `${item.key}.description`);
+    for (const entry of [...(item.variables ?? []), ...(item.outputs ?? [])]) {
+      check(entry.label, `${item.key}.${entry.key}.label`);
+    }
+  }
+});
+
+test('no multi-language object anywhere misses a language', () => {
+  // A catch-all over the whole manifest, for what the checks above do not list.
+  const walk = (value, where) => {
+    if (Array.isArray(value)) {
+      value.forEach((entry, index) => walk(entry, `${where}[${index}]`));
+    } else if (value && typeof value === 'object') {
+      if (typeof value.en === 'string') {
+        assert.deepEqual(Object.keys(value), LANGUAGES, where);
+      } else {
+        for (const [key, entry] of Object.entries(value)) walk(entry, `${where}.${key}`);
+      }
+    }
+  };
+  walk(manifest, 'manifest');
+});
+
+test('texts stay within the store length limits in every language', () => {
+  for (const section of manifest.config_schema.filter((f) => f.type === 'section')) {
+    for (const lang of LANGUAGES) {
+      assert.ok((section.description?.[lang] ?? '').length <= 1000, `${section.key}.${lang}`);
+    }
+  }
+  for (const widget of manifest.widgets ?? []) {
+    for (const lang of LANGUAGES) {
+      const length = widget.label[lang].length;
+      assert.ok(length >= 3 && length <= 30, `widget ${widget.key} label.${lang}: ${length}`);
+    }
   }
 });
