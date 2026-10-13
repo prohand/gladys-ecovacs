@@ -19,13 +19,23 @@ import { CONSUMABLE_LOW_PERCENT } from './scenes.js';
 export const ROBOT_WIDGET = 'robot';
 
 const STATE_LABELS = {
-  [VACUUM_STATE.STOPPED]: { en: 'Stopped', fr: 'Arrêté' },
-  [VACUUM_STATE.RUNNING]: { en: 'Working', fr: 'En marche' },
-  [VACUUM_STATE.PAUSED]: { en: 'Paused', fr: 'En pause' },
-  [VACUUM_STATE.ERROR]: { en: 'Error', fr: 'En erreur' },
-  [VACUUM_STATE.RETURNING_TO_DOCK]: { en: 'Returning to dock', fr: 'Retour à la base' },
-  [VACUUM_STATE.CHARGING]: { en: 'Charging', fr: 'En charge' },
-  [VACUUM_STATE.DOCKED]: { en: 'Docked', fr: 'Sur la base' },
+  [VACUUM_STATE.STOPPED]: { en: 'Stopped', fr: 'Arrêté', de: 'Gestoppt', es: 'Detenido' },
+  [VACUUM_STATE.RUNNING]: { en: 'Working', fr: 'En marche', de: 'In Betrieb', es: 'En marcha' },
+  [VACUUM_STATE.PAUSED]: { en: 'Paused', fr: 'En pause', de: 'Pausiert', es: 'En pausa' },
+  [VACUUM_STATE.ERROR]: { en: 'Error', fr: 'En erreur', de: 'Fehler', es: 'Con error' },
+  [VACUUM_STATE.RETURNING_TO_DOCK]: {
+    en: 'Returning to dock',
+    fr: 'Retour à la base',
+    de: 'Rückkehr zur Station',
+    es: 'Volviendo a la base',
+  },
+  [VACUUM_STATE.CHARGING]: { en: 'Charging', fr: 'En charge', de: 'Lädt', es: 'Cargando' },
+  [VACUUM_STATE.DOCKED]: {
+    en: 'Docked',
+    fr: 'Sur la base',
+    de: 'In der Station',
+    es: 'En la base',
+  },
 };
 
 const STATE_COLORS = {
@@ -39,43 +49,62 @@ const STATE_COLORS = {
 };
 
 const T = {
-  state: { en: 'State', fr: 'État' },
-  error: { en: 'Error', fr: 'Erreur' },
-  suction: { en: 'Suction', fr: 'Aspiration' },
-  link: { en: 'Connection', fr: 'Connexion' },
-  battery: { en: 'Battery', fr: 'Batterie' },
-  cloud: { en: 'Cloud', fr: 'Cloud' },
-  unreachable: { en: 'Unreachable', fr: 'Injoignable' },
-  start: { en: 'Start', fr: 'Démarrer' },
-  resume: { en: 'Resume', fr: 'Reprendre' },
-  pause: { en: 'Pause', fr: 'Pause' },
-  stop: { en: 'Stop', fr: 'Arrêter' },
-  dock: { en: 'Dock', fr: 'Base' },
-  locate: { en: 'Locate', fr: 'Localiser' },
+  state: { en: 'State', fr: 'État', de: 'Zustand', es: 'Estado' },
+  error: { en: 'Error', fr: 'Erreur', de: 'Fehler', es: 'Error' },
+  suction: { en: 'Suction', fr: 'Aspiration', de: 'Saugleistung', es: 'Aspiración' },
+  link: { en: 'Connection', fr: 'Connexion', de: 'Verbindung', es: 'Conexión' },
+  battery: { en: 'Battery', fr: 'Batterie', de: 'Akku', es: 'Batería' },
+  cloud: { en: 'Cloud', fr: 'Cloud', de: 'Cloud', es: 'Nube' },
+  unreachable: { en: 'Unreachable', fr: 'Injoignable', de: 'Nicht erreichbar', es: 'Inaccesible' },
+  start: { en: 'Start', fr: 'Démarrer', de: 'Starten', es: 'Iniciar' },
+  resume: { en: 'Resume', fr: 'Reprendre', de: 'Fortsetzen', es: 'Reanudar' },
+  pause: { en: 'Pause', fr: 'Pause', de: 'Pause', es: 'Pausa' },
+  stop: { en: 'Stop', fr: 'Arrêter', de: 'Stopp', es: 'Detener' },
+  dock: { en: 'Dock', fr: 'Base', de: 'Station', es: 'Base' },
+  locate: { en: 'Locate', fr: 'Localiser', de: 'Orten', es: 'Localizar' },
   waiting: {
     en: 'Waiting for the first reading of the robot.',
     fr: 'En attente de la première lecture du robot.',
+    de: 'Warten auf die erste Abfrage des Roboters.',
+    es: 'Esperando la primera lectura del robot.',
   },
   unknown: {
     en: 'Pick a robot of the Ecovacs account in the widget settings.',
     fr: 'Choisissez un robot du compte Ecovacs dans les réglages du widget.',
+    de: 'Wählen Sie in den Widget-Einstellungen einen Roboter des Ecovacs-Kontos.',
+    es: 'Elija un robot de la cuenta de Ecovacs en los ajustes del widget.',
   },
 };
 
 // Short consumable labels (tile labels hold 24 characters).
 const CONSUMABLE_LABELS = {
-  'main-brush': { en: 'Main brush', fr: 'Brosse princ.' },
-  'side-brush': { en: 'Side brush', fr: 'Brosse latérale' },
-  filter: { en: 'Filter', fr: 'Filtre' },
-  blade: { en: 'Blades', fr: 'Lames' },
-  'lens-brush': { en: 'Lens brush', fr: 'Brosse caméra' },
+  'main-brush': {
+    en: 'Main brush',
+    fr: 'Brosse princ.',
+    de: 'Hauptbürste',
+    es: 'Cepillo principal',
+  },
+  'side-brush': {
+    en: 'Side brush',
+    fr: 'Brosse latérale',
+    de: 'Seitenbürste',
+    es: 'Cepillo lateral',
+  },
+  filter: { en: 'Filter', fr: 'Filtre', de: 'Filter', es: 'Filtro' },
+  blade: { en: 'Blades', fr: 'Lames', de: 'Messer', es: 'Cuchillas' },
+  'lens-brush': {
+    en: 'Lens brush',
+    fr: 'Brosse caméra',
+    de: 'Linsenbürste',
+    es: 'Cepillo de lente',
+  },
 };
 
 const SUCTION_LABELS = {
-  quiet: { en: 'Quiet', fr: 'Silencieux' },
-  standard: { en: 'Standard', fr: 'Standard' },
-  max: { en: 'Max', fr: 'Max' },
-  max_plus: { en: 'Max+', fr: 'Max+' },
+  quiet: { en: 'Quiet', fr: 'Silencieux', de: 'Leise', es: 'Silencioso' },
+  standard: { en: 'Standard', fr: 'Standard', de: 'Standard', es: 'Estándar' },
+  max: { en: 'Max', fr: 'Max', de: 'Max', es: 'Máx.' },
+  max_plus: { en: 'Max+', fr: 'Max+', de: 'Max+', es: 'Máx.+' },
 };
 
 const pick = (text, language) => text[language] ?? text.en;
@@ -160,11 +189,36 @@ function button(label, key, icon, style) {
 }
 
 const ACTION_DONE = {
-  start: { en: 'Order sent: start.', fr: 'Ordre envoyé : démarrage.' },
-  pause: { en: 'Order sent: pause.', fr: 'Ordre envoyé : pause.' },
-  stop: { en: 'Order sent: stop.', fr: 'Ordre envoyé : arrêt.' },
-  dock: { en: 'Order sent: back to the dock.', fr: 'Ordre envoyé : retour à la base.' },
-  locate: { en: 'Listen: the robot says where it is.', fr: 'Écoutez : le robot se signale.' },
+  start: {
+    en: 'Order sent: start.',
+    fr: 'Ordre envoyé : démarrage.',
+    de: 'Befehl gesendet: Start.',
+    es: 'Orden enviada: inicio.',
+  },
+  pause: {
+    en: 'Order sent: pause.',
+    fr: 'Ordre envoyé : pause.',
+    de: 'Befehl gesendet: Pause.',
+    es: 'Orden enviada: pausa.',
+  },
+  stop: {
+    en: 'Order sent: stop.',
+    fr: 'Ordre envoyé : arrêt.',
+    de: 'Befehl gesendet: Stopp.',
+    es: 'Orden enviada: parada.',
+  },
+  dock: {
+    en: 'Order sent: back to the dock.',
+    fr: 'Ordre envoyé : retour à la base.',
+    de: 'Befehl gesendet: zurück zur Station.',
+    es: 'Orden enviada: vuelta a la base.',
+  },
+  locate: {
+    en: 'Listen: the robot says where it is.',
+    fr: 'Écoutez : le robot se signale.',
+    de: 'Hören Sie hin: Der Roboter meldet sich.',
+    es: 'Escuche: el robot indica dónde está.',
+  },
 };
 
 /**
@@ -180,6 +234,8 @@ export async function runRobotWidgetAction(fleet, { actionKey, settings = {} }) 
     return {
       en: 'The robot did not take the order. Is it switched on and connected?',
       fr: 'Le robot n’a pas pris l’ordre. Est-il allumé et connecté ?',
+      de: 'Der Roboter hat den Befehl nicht angenommen. Ist er eingeschaltet und verbunden?',
+      es: 'El robot no ha aceptado la orden. ¿Está encendido y conectado?',
     };
   }
   fleet.refreshWidget();

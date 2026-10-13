@@ -13,7 +13,8 @@ and the SDK
   Ecovacs offers no local API; each robot card shows a `cloud` badge, or
   `unreachable` when the robot stops answering.
 - **Gladys**: 5.1.0 or later (scene triggers, scene actions, dashboard widget).
-- **User documentation**: [English](docs/en.md) · [Français](docs/fr.md).
+- **User documentation**: [English](docs/en.md) · [Français](docs/fr.md) ·
+  [Deutsch](docs/de.md) · [Español](docs/es.md).
 
 ## Features
 
@@ -67,7 +68,7 @@ used.
 │  └─ capabilities/
 │     ├─ scenes.js              # scene triggers (transitions) and actions
 │     └─ widget.js              # dashboard widget (content + buttons)
-├─ docs/en.md, docs/fr.md       # user documentation (re-hosted by Gladys)
+├─ docs/{en,fr,de,es}.md        # user documentation (re-hosted by Gladys)
 ├─ test/                        # node --test, fake Gladys + fake Ecovacs cloud
 ├─ gladys-assistant-integration.json
 ├─ Dockerfile                   # Node 24 Alpine, read-only rootfs ready

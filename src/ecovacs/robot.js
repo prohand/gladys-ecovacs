@@ -64,38 +64,150 @@ export function robotKind(info) {
 // The codes `getError` reports (the ones users actually meet). 0 and 100 mean
 // "no error"; an unknown code is still reported, with its number.
 export const ERROR_MESSAGES = {
-  101: { en: 'Battery low', fr: 'Batterie faible' },
-  102: { en: 'Robot stuck in a loop', fr: 'Robot bloqué dans une boucle' },
-  103: { en: 'Wheel problem', fr: 'Problème de roue' },
-  104: { en: 'Cliff sensor problem', fr: 'Problème de capteur anti-chute' },
-  105: { en: 'Robot stuck', fr: 'Robot coincé' },
-  106: { en: 'Side brush worn out', fr: 'Brosse latérale usée' },
-  107: { en: 'Dust bin full', fr: 'Bac à poussière plein' },
-  108: { en: 'Side brush blocked', fr: 'Brosse latérale bloquée' },
-  109: { en: 'Main brush blocked', fr: 'Brosse principale bloquée' },
-  110: { en: 'Dust bin missing', fr: 'Bac à poussière absent' },
-  111: { en: 'Bumper problem', fr: 'Problème de pare-chocs' },
-  112: { en: 'Laser sensor problem', fr: 'Problème du capteur laser' },
-  113: { en: 'Main brush worn out', fr: 'Brosse principale usée' },
-  114: { en: 'Dust bin full', fr: 'Bac à poussière plein' },
-  115: { en: 'Battery problem', fr: 'Problème de batterie' },
-  116: { en: 'Front sensor problem', fr: 'Problème du capteur avant' },
-  117: { en: 'Gyroscope problem', fr: 'Problème de gyroscope' },
-  118: { en: 'Filter blocked', fr: 'Filtre bouché' },
-  119: { en: 'Fan problem', fr: 'Problème de ventilateur' },
-  120: { en: 'Water tank problem', fr: "Problème de réservoir d'eau" },
-  204: { en: 'Wheel stuck', fr: 'Roue coincée' },
-  312: { en: 'Replace the dust bag', fr: 'Remplacez le sac à poussière' },
-  1007: { en: 'Mop plate loose', fr: 'Support de serpillière mal fixé' },
+  101: { en: 'Battery low', fr: 'Batterie faible', de: 'Akku schwach', es: 'Batería baja' },
+  102: {
+    en: 'Robot stuck in a loop',
+    fr: 'Robot bloqué dans une boucle',
+    de: 'Roboter in einer Schleife festgefahren',
+    es: 'Robot atrapado en un bucle',
+  },
+  103: {
+    en: 'Wheel problem',
+    fr: 'Problème de roue',
+    de: 'Problem mit einem Rad',
+    es: 'Problema de rueda',
+  },
+  104: {
+    en: 'Cliff sensor problem',
+    fr: 'Problème de capteur anti-chute',
+    de: 'Problem mit dem Absturzsensor',
+    es: 'Problema del sensor anticaída',
+  },
+  105: { en: 'Robot stuck', fr: 'Robot coincé', de: 'Roboter festgefahren', es: 'Robot atascado' },
+  106: {
+    en: 'Side brush worn out',
+    fr: 'Brosse latérale usée',
+    de: 'Seitenbürste abgenutzt',
+    es: 'Cepillo lateral desgastado',
+  },
+  107: {
+    en: 'Dust bin full',
+    fr: 'Bac à poussière plein',
+    de: 'Staubbehälter voll',
+    es: 'Depósito de polvo lleno',
+  },
+  108: {
+    en: 'Side brush blocked',
+    fr: 'Brosse latérale bloquée',
+    de: 'Seitenbürste blockiert',
+    es: 'Cepillo lateral bloqueado',
+  },
+  109: {
+    en: 'Main brush blocked',
+    fr: 'Brosse principale bloquée',
+    de: 'Hauptbürste blockiert',
+    es: 'Cepillo principal bloqueado',
+  },
+  110: {
+    en: 'Dust bin missing',
+    fr: 'Bac à poussière absent',
+    de: 'Staubbehälter fehlt',
+    es: 'Falta el depósito de polvo',
+  },
+  111: {
+    en: 'Bumper problem',
+    fr: 'Problème de pare-chocs',
+    de: 'Problem mit dem Stoßfänger',
+    es: 'Problema del parachoques',
+  },
+  112: {
+    en: 'Laser sensor problem',
+    fr: 'Problème du capteur laser',
+    de: 'Problem mit dem Lasersensor',
+    es: 'Problema del sensor láser',
+  },
+  113: {
+    en: 'Main brush worn out',
+    fr: 'Brosse principale usée',
+    de: 'Hauptbürste abgenutzt',
+    es: 'Cepillo principal desgastado',
+  },
+  114: {
+    en: 'Dust bin full',
+    fr: 'Bac à poussière plein',
+    de: 'Staubbehälter voll',
+    es: 'Depósito de polvo lleno',
+  },
+  115: {
+    en: 'Battery problem',
+    fr: 'Problème de batterie',
+    de: 'Akkuproblem',
+    es: 'Problema de batería',
+  },
+  116: {
+    en: 'Front sensor problem',
+    fr: 'Problème du capteur avant',
+    de: 'Problem mit dem Frontsensor',
+    es: 'Problema del sensor frontal',
+  },
+  117: {
+    en: 'Gyroscope problem',
+    fr: 'Problème de gyroscope',
+    de: 'Problem mit dem Gyroskop',
+    es: 'Problema del giroscopio',
+  },
+  118: {
+    en: 'Filter blocked',
+    fr: 'Filtre bouché',
+    de: 'Filter verstopft',
+    es: 'Filtro obstruido',
+  },
+  119: {
+    en: 'Fan problem',
+    fr: 'Problème de ventilateur',
+    de: 'Problem mit dem Gebläse',
+    es: 'Problema del ventilador',
+  },
+  120: {
+    en: 'Water tank problem',
+    fr: "Problème de réservoir d'eau",
+    de: 'Problem mit dem Wassertank',
+    es: 'Problema del depósito de agua',
+  },
+  204: { en: 'Wheel stuck', fr: 'Roue coincée', de: 'Rad blockiert', es: 'Rueda atascada' },
+  312: {
+    en: 'Replace the dust bag',
+    fr: 'Remplacez le sac à poussière',
+    de: 'Ersetzen Sie den Staubbeutel',
+    es: 'Sustituya la bolsa de polvo',
+  },
+  1007: {
+    en: 'Mop plate loose',
+    fr: 'Support de serpillière mal fixé',
+    de: 'Wischplatte locker',
+    es: 'Soporte de la mopa suelto',
+  },
 };
 
-export const NO_ERROR = { en: 'No error', fr: 'Aucune erreur' };
+export const NO_ERROR = {
+  en: 'No error',
+  fr: 'Aucune erreur',
+  de: 'Kein Fehler',
+  es: 'Sin errores',
+};
 
 export function errorMessage(code) {
   if (!code) {
     return NO_ERROR;
   }
-  return ERROR_MESSAGES[code] ?? { en: `Error ${code}`, fr: `Erreur ${code}` };
+  return (
+    ERROR_MESSAGES[code] ?? {
+      en: `Error ${code}`,
+      fr: `Erreur ${code}`,
+      de: `Fehler ${code}`,
+      es: `Error ${code}`,
+    }
+  );
 }
 
 /** Error code of a `getError` answer: `{ code: [105] }`, 0 when none. */

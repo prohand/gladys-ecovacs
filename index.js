@@ -153,11 +153,15 @@ gladys.onAction('locate', async (fields) => {
     return {
       en: 'Listen: the robot says where it is.',
       fr: 'Écoutez : le robot indique où il se trouve.',
+      de: 'Hören Sie hin: Der Roboter zeigt an, wo er sich befindet.',
+      es: 'Escuche: el robot indica dónde se encuentra.',
     };
   }
   return {
     en: 'The robot did not answer. Is it switched on and connected to Wi-Fi?',
     fr: 'Le robot n’a pas répondu. Est-il allumé et connecté au Wi-Fi ?',
+    de: 'Der Roboter hat nicht geantwortet. Ist er eingeschaltet und mit dem WLAN verbunden?',
+    es: 'El robot no ha respondido. ¿Está encendido y conectado a la red wifi?',
   };
 });
 
@@ -194,6 +198,8 @@ gladys.on('connected', async () => {
       .setConnectionStatus(false, {
         en: 'Initialization failed, check the integration logs.',
         fr: "L'initialisation a échoué, consultez les logs de l'intégration.",
+        de: 'Die Initialisierung ist fehlgeschlagen, sehen Sie in den Protokollen der Integration nach.',
+        es: 'La inicialización ha fallado, consulte los registros de la integración.',
       })
       .catch(() => {});
   }

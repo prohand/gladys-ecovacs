@@ -75,6 +75,36 @@ test('after polls: status rows, live battery, rendered exactly as sent', async (
   assert.deepEqual(buttons(content), ['pause', 'stop', 'dock', 'locate']);
 });
 
+test('the rows follow the reader language: German, Spanish, English otherwise', async () => {
+  const { fleet, fake } = await makeFleet();
+  fake.robots[ROBOT_T8.did].answers.getCleanInfo_V2 = {
+    state: 'clean',
+    cleanState: { motionState: 'working' },
+  };
+  await fleet.poll({ external_id: T8_ID });
+  const rowsIn = (language) => {
+    const content = widget.get(fleet, { settings: { device: T8_ID }, language });
+    assert.deepEqual(validateWidgetContent(content), []);
+    const status = content.components.find((c) => c.type === 'status');
+    for (const item of status.items) {
+      assert.deepEqual(Object.keys(item.label), ['en', 'fr', 'de', 'es'], item.label.en);
+    }
+    return Object.fromEntries(status.items.map((i) => [i.label.en, i.value]));
+  };
+  assert.equal(rowsIn('de').State, 'In Betrieb');
+  assert.equal(rowsIn('de').Error, 'Kein Fehler');
+  assert.equal(rowsIn('es').State, 'En marcha');
+  assert.equal(rowsIn('es').Error, 'Sin errores');
+  assert.equal(rowsIn('it').State, 'Working');
+  const buttonLabels = widget
+    .get(fleet, { settings: { device: T8_ID }, language: 'de' })
+    .components.filter((c) => c.type === 'button')
+    .map((c) => c.label);
+  for (const label of buttonLabels) {
+    assert.deepEqual(Object.keys(label), ['en', 'fr', 'de', 'es'], label.en);
+  }
+});
+
 test('a mower: no suction row, its own consumables', async () => {
   const { fleet, fake } = await makeFleet();
   fake.robots[ROBOT_GOAT.did].answers.getLifeSpan = [
@@ -96,7 +126,7 @@ test('every button action is handled, and answers a toast', async () => {
   const content = widget.get(fleet, { settings: { device: T8_ID }, language: 'en' });
   for (const key of buttons(content)) {
     const toast = await widget.action(fleet, { actionKey: key, settings: { device: T8_ID } });
-    assert.ok(toast.en && toast.fr, key);
+    assert.deepEqual(Object.keys(toast), ['en', 'fr', 'de', 'es'], key);
   }
   assert.ok(gladys.widgetRefreshes.includes(ROBOT_WIDGET));
   assert.ok(fake.commands(ROBOT_T8.did).some((c) => c.name === 'charge'));

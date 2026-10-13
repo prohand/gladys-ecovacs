@@ -92,7 +92,7 @@ token), `test/helpers/fakeGladys.js` stands in for the SDK.
 ## Conventions
 
 - Prettier formats, ESLint catches mistakes. Comments explain **why**, in English.
-- User-facing messages are bilingual `{ en, fr }`; user docs in `docs/en.md` and
-  `docs/fr.md`, kept in sync.
+- User-facing text is `{ en, fr, de, es }`; user docs in `docs/en.md`, `docs/fr.md`,
+  `docs/de.md` and `docs/es.md`, kept in sync.
 - Every user-visible change adds a line under `## [Unreleased]` in `CHANGELOG.md`. Never
   write a version heading, never edit `version` / `docker_image` by hand.
