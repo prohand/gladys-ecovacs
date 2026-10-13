@@ -29,15 +29,19 @@ test('failure messages say what to fix, in every language', () => {
   assert.match(failureMessage(new EcovacsError('x', { kind: 'verification' })).fr, /code/);
 });
 
-test('an action error carries every language (shown as a failure)', () => {
+test('an action error carries English and French only (shown as a failure)', () => {
   const error = actionError({ en: 'Wrong code.', fr: 'Code faux.' });
   assert.ok(error instanceof Error);
   assert.equal(error.message, 'Wrong code. / Code faux.');
   assert.equal(actionError({ en: 'Same', fr: 'Same' }).message, 'Same');
   assert.equal(
-    actionError({ en: 'Wrong code.', fr: 'Code faux.', de: 'Falscher Code.', es: 'Wrong code.' })
-      .message,
-    'Wrong code. / Code faux. / Falscher Code.',
+    actionError({
+      en: 'Wrong code.',
+      fr: 'Code faux.',
+      de: 'Falscher Code.',
+      es: 'Código erróneo.',
+    }).message,
+    'Wrong code. / Code faux.',
   );
 });
 

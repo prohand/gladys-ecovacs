@@ -178,7 +178,7 @@ export const ERROR_MESSAGES = {
   312: {
     en: 'Replace the dust bag',
     fr: 'Remplacez le sac à poussière',
-    de: 'Ersetzen Sie den Staubbeutel',
+    de: 'Ersetze den Staubbeutel',
     es: 'Sustituya la bolsa de polvo',
   },
   1007: {

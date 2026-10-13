@@ -153,7 +153,7 @@ gladys.onAction('locate', async (fields) => {
     return {
       en: 'Listen: the robot says where it is.',
       fr: 'Écoutez : le robot indique où il se trouve.',
-      de: 'Hören Sie hin: Der Roboter zeigt an, wo er sich befindet.',
+      de: 'Hör hin: Der Roboter zeigt an, wo er sich befindet.',
       es: 'Escuche: el robot indica dónde se encuentra.',
     };
   }
@@ -198,7 +198,7 @@ gladys.on('connected', async () => {
       .setConnectionStatus(false, {
         en: 'Initialization failed, check the integration logs.',
         fr: "L'initialisation a échoué, consultez les logs de l'intégration.",
-        de: 'Die Initialisierung ist fehlgeschlagen, sehen Sie in den Protokollen der Integration nach.',
+        de: 'Die Initialisierung ist fehlgeschlagen, sieh in den Protokollen der Integration nach.',
         es: 'La inicialización ha fallado, consulte los registros de la integración.',
       })
       .catch(() => {});

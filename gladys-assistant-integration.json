@@ -27,7 +27,7 @@
       "description": {
         "en": "Your robots (Deebot vacuums, GOAT mowers) are reached through the Ecovacs cloud, with the account of the Ecovacs Home app: add the robots in the app first, then enter the same email, password and country here. Accounts created with Google, Apple or Facebook sign-in need a password: set one in the app (Profile, account settings). On the first connection, Ecovacs may ask to confirm Gladys as a new device: \"Send the verification code\" mails you a code, enter it in \"Confirm the device\".",
         "fr": "Vos robots (aspirateurs Deebot, tondeuses GOAT) sont joints via le cloud Ecovacs, avec le compte de l'application Ecovacs Home : ajoutez d'abord les robots dans l'application, puis saisissez ici le même e-mail, mot de passe et pays. Un compte créé avec Google, Apple ou Facebook a besoin d'un mot de passe : définissez-en un dans l'application (Profil, paramètres du compte). À la première connexion, Ecovacs peut demander de confirmer Gladys comme nouvel appareil : « Envoyer le code de vérification » vous envoie un code par e-mail, saisissez-le dans « Confirmer l'appareil ».",
-        "de": "Gladys erreicht Ihre Roboter (Deebot-Saugroboter, GOAT-Mähroboter) über die Ecovacs-Cloud, mit dem Konto der App Ecovacs Home: Fügen Sie die Roboter zuerst in der App hinzu und geben Sie dann hier dieselbe E-Mail-Adresse, dasselbe Passwort und dasselbe Land ein. Konten, die mit der Google-, Apple- oder Facebook-Anmeldung erstellt wurden, benötigen ein Passwort: Legen Sie eines in der App fest (Profil, Kontoeinstellungen). Bei der ersten Verbindung kann Ecovacs verlangen, Gladys als neues Gerät zu bestätigen: „Bestätigungscode senden“ schickt Ihnen einen Code per E-Mail, geben Sie ihn unter „Gerät bestätigen“ ein.",
+        "de": "Gladys erreicht deine Roboter (Deebot-Saugroboter, GOAT-Mähroboter) über die Ecovacs-Cloud, mit dem Konto der App Ecovacs Home: Füge die Roboter zuerst in der App hinzu und gib dann hier dieselbe E-Mail-Adresse, dasselbe Passwort und dasselbe Land ein. Konten, die mit der Google-, Apple- oder Facebook-Anmeldung erstellt wurden, benötigen ein Passwort: Lege eines in der App fest (Profil, Kontoeinstellungen). Bei der ersten Verbindung kann Ecovacs verlangen, Gladys als neues Gerät zu bestätigen: „Bestätigungscode senden“ schickt dir einen Code per E-Mail, gib ihn unter „Gerät bestätigen“ ein.",
         "es": "Gladys se comunica con sus robots (aspiradores Deebot, cortacéspedes GOAT) a través de la nube de Ecovacs, con la cuenta de la aplicación Ecovacs Home: primero añada los robots en la aplicación y luego introduzca aquí el mismo correo electrónico, la misma contraseña y el mismo país. Las cuentas creadas con el inicio de sesión de Google, Apple o Facebook necesitan una contraseña: defina una en la aplicación (Perfil, ajustes de la cuenta). En la primera conexión, Ecovacs puede pedir que confirme Gladys como nuevo dispositivo: «Enviar el código de verificación» le envía un código por correo electrónico; introdúzcalo en «Confirmar el dispositivo»."
       },
       "links": [
@@ -54,7 +54,7 @@
       "description": {
         "en": "The email of your Ecovacs Home account.",
         "fr": "L'e-mail de votre compte Ecovacs Home.",
-        "de": "Die E-Mail-Adresse Ihres Ecovacs-Home-Kontos.",
+        "de": "Die E-Mail-Adresse deines Ecovacs-Home-Kontos.",
         "es": "El correo electrónico de su cuenta de Ecovacs Home."
       },
       "placeholder": {
@@ -77,7 +77,7 @@
       "description": {
         "en": "The password of your Ecovacs Home account. Only its MD5 fingerprint is sent to Ecovacs, as the app does.",
         "fr": "Le mot de passe de votre compte Ecovacs Home. Seule son empreinte MD5 est envoyée à Ecovacs, comme le fait l'application.",
-        "de": "Das Passwort Ihres Ecovacs-Home-Kontos. Wie in der App wird nur sein MD5-Fingerabdruck an Ecovacs gesendet.",
+        "de": "Das Passwort deines Ecovacs-Home-Kontos. Wie in der App wird nur sein MD5-Fingerabdruck an Ecovacs gesendet.",
         "es": "La contraseña de su cuenta de Ecovacs Home. Solo se envía a Ecovacs su huella MD5, como hace la aplicación."
       },
       "required": true

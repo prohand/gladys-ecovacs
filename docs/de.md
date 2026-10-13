@@ -1,6 +1,6 @@
 # Ecovacs
 
-Steuern Sie Ihre **Ecovacs-Deebot-Saugroboter** und **Ecovacs-GOAT-Mähroboter**
+Steuere deine **Ecovacs-Deebot-Saugroboter** und **Ecovacs-GOAT-Mähroboter**
 aus Gladys: Auftrag starten und stoppen, den Roboter zu seiner Ladestation
 zurückschicken, die Saugleistung einstellen, Akku, Fehler und Verschleiß der
 Teile verfolgen.
@@ -9,23 +9,23 @@ Die Integration läuft über die **Ecovacs-Cloud**, mit dem Konto der App
 **Ecovacs Home**: Ecovacs bietet keine lokale Verbindung an. Gladys braucht
 Internetzugang, und der Roboter muss in der App erscheinen.
 
-## Bevor Sie beginnen
+## Bevor du beginnst
 
-1. Installieren Sie die App **Ecovacs Home** und fügen Sie Ihre Roboter hinzu.
-2. Notieren Sie die **E-Mail-Adresse** und das **Passwort** des Kontos sowie
+1. Installiere die App **Ecovacs Home** und füge deine Roboter hinzu.
+2. Notiere die **E-Mail-Adresse** und das **Passwort** des Kontos sowie
    das **Land**, das bei der Erstellung des Kontos gewählt wurde.
 3. Konto mit Google-, Apple- oder Facebook-Anmeldung erstellt: Es hat kein
-   Passwort. Legen Sie eines in der App fest (Profil, Kontoeinstellungen).
+   Passwort. Lege eines in der App fest (Profil, Kontoeinstellungen).
 
 ## Konfiguration
 
-1. Öffnen Sie den Tab **Konfiguration** der Integration.
-2. Geben Sie die **E-Mail-Adresse**, das **Passwort** und das **Land des
+1. Öffne den Tab **Konfiguration** der Integration.
+2. Gib die **E-Mail-Adresse**, das **Passwort** und das **Land des
    Kontos** ein.
-3. Wählen Sie das **Aktualisierungsintervall** (standardmäßig 1 Minute).
-4. Speichern Sie und klicken Sie dann auf **Verbindung testen**: Die Meldung
+3. Wähle das **Aktualisierungsintervall** (standardmäßig 1 Minute).
+4. Speichere und klicke dann auf **Verbindung testen**: Die Meldung
    listet die gefundenen Roboter auf.
-5. Öffnen Sie den Tab **Entdecken** und fügen Sie Ihre Roboter hinzu.
+5. Öffne den Tab **Entdecken** und füge deine Roboter hinzu.
 
 ### Geräteverifizierung
 
@@ -33,9 +33,9 @@ Ecovacs kann verlangen, Gladys als neues Gerät zu bestätigen (die Meldung sagt
 es, die Cloud antwortet mit dem Code 1013 „Please update to the latest
 version“):
 
-1. Klicken Sie auf **Bestätigungscode senden**: Ecovacs schickt einen Code an
-   die E-Mail-Adresse des Kontos (sehen Sie auch im Spam-Ordner nach).
-2. Geben Sie ihn unter **Gerät bestätigen** ein und klicken Sie: Die Roboter
+1. Klicke auf **Bestätigungscode senden**: Ecovacs schickt einen Code an
+   die E-Mail-Adresse des Kontos (sieh auch im Spam-Ordner nach).
+2. Gib ihn unter **Gerät bestätigen** ein und klicke: Die Roboter
    werden aufgelistet.
 
 Gladys behält für das Konto dieselbe Gerätekennung, auch nach einem Neustart.
@@ -43,7 +43,7 @@ Gladys behält für das Konto dieselbe Gerätekennung, auch nach einem Neustart.
 Das Passwort wird nie im Klartext gesendet: Wie in der App geht nur sein
 MD5-Fingerabdruck an Ecovacs.
 
-## Was Sie erhalten
+## Was du erhältst
 
 | Funktion                           | Saugroboter | Mähroboter | Detail                                                                                 |
 | ---------------------------------- | ----------- | ---------- | -------------------------------------------------------------------------------------- |
@@ -98,8 +98,8 @@ angenommen hat, um den Rest der Szene davon abhängig zu machen):
 
 ## Dashboard-Widget
 
-Fügen Sie das Widget **Ecovacs-Roboter** zu einem Dashboard hinzu und wählen
-Sie den Roboter in seinen Einstellungen. Es zeigt:
+Füge das Widget **Ecovacs-Roboter** zu einem Dashboard hinzu und wähle
+den Roboter in seinen Einstellungen. Es zeigt:
 
 - den Akku, live;
 - den Zustand, den letzten Fehler, die Saugleistung, den Verschleiß der
@@ -132,7 +132,7 @@ Anfrage an die Ecovacs-Cloud.
 | 119  | Problem mit dem Gebläse                |
 | 120  | Problem mit dem Wassertank             |
 | 204  | Rad blockiert                          |
-| 312  | Ersetzen Sie den Staubbeutel           |
+| 312  | Ersetze den Staubbeutel                |
 | 1007 | Wischplatte locker                     |
 
 ## Unterstützte Roboter
@@ -147,19 +147,19 @@ Anfrage an die Ecovacs-Cloud.
 
 ## Fehlerbehebung
 
-- **„Ecovacs hat die E-Mail-Adresse oder das Passwort abgelehnt“**: Prüfen Sie
+- **„Ecovacs hat die E-Mail-Adresse oder das Passwort abgelehnt“**: Prüfe
   sie in der App und vor allem das **Land des Kontos**. Nach einer solchen
   Ablehnung versucht es die Integration nicht mehr von selbst (um das Konto
-  nicht zu sperren): Korrigieren Sie die Konfiguration oder klicken Sie auf
+  nicht zu sperren): Korrigiere die Konfiguration oder klicke auf
   **Verbindung testen**.
-- **„Ecovacs verlangt, Gladys als neues Gerät zu bestätigen“**: Folgen Sie der
+- **„Ecovacs verlangt, Gladys als neues Gerät zu bestätigen“**: Folge der
   [Geräteverifizierung](#geräteverifizierung). Bis dahin versucht es die
   Integration nicht von selbst.
 - **„Ecovacs hat den Bestätigungscode abgelehnt“**: Der Code ist falsch oder zu
-  alt; fordern Sie einen neuen an.
-- **„Die Ecovacs-Cloud ist nicht erreichbar“**: Prüfen Sie den Internetzugang
+  alt; fordere einen neuen an.
+- **„Die Ecovacs-Cloud ist nicht erreichbar“**: Prüfe den Internetzugang
   von Gladys. Die Integration versucht es alle 5 Minuten erneut.
 - **Der Roboter ist nicht erreichbar**: Er ist ausgeschaltet oder außerhalb des
-  WLANs; prüfen Sie, ob er in der App Ecovacs Home antwortet.
+  WLANs; prüfe, ob er in der App Ecovacs Home antwortet.
 - Die Protokolle der Integration (Gladys-Oberfläche oder `docker logs`)
   enthalten nie das Passwort oder die Tokens.

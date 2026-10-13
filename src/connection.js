@@ -11,14 +11,14 @@ export const LANGUAGES = ['en', 'fr', 'de', 'es'];
 export const NOT_CONFIGURED = {
   en: 'Enter the email and password of your Ecovacs Home account.',
   fr: 'Renseignez l’e-mail et le mot de passe de votre compte Ecovacs Home.',
-  de: 'Geben Sie die E-Mail-Adresse und das Passwort Ihres Ecovacs-Home-Kontos ein.',
+  de: 'Gib die E-Mail-Adresse und das Passwort deines Ecovacs-Home-Kontos ein.',
   es: 'Introduzca el correo electrónico y la contraseña de su cuenta de Ecovacs Home.',
 };
 
 export const CODE_SENT = {
   en: 'Ecovacs sent a code by email to the account (check the spam folder too). Enter it in "Confirm the device".',
   fr: 'Ecovacs a envoyé un code par e-mail au compte (regardez aussi dans les spams). Saisissez-le dans « Confirmer l’appareil ».',
-  de: 'Ecovacs hat einen Code per E-Mail an das Konto gesendet (sehen Sie auch im Spam-Ordner nach). Geben Sie ihn unter „Gerät bestätigen“ ein.',
+  de: 'Ecovacs hat einen Code per E-Mail an das Konto gesendet (sieh auch im Spam-Ordner nach). Gib ihn unter „Gerät bestätigen“ ein.',
   es: 'Ecovacs ha enviado un código por correo electrónico a la cuenta (revise también la carpeta de spam). Introdúzcalo en «Confirmar el dispositivo».',
 };
 
@@ -29,28 +29,28 @@ export function failureMessage(err) {
       return {
         en: 'Ecovacs refused the email or password. Check them, and the country of the account.',
         fr: 'Ecovacs a refusé l’e-mail ou le mot de passe. Vérifiez-les, ainsi que le pays du compte.',
-        de: 'Ecovacs hat die E-Mail-Adresse oder das Passwort abgelehnt. Prüfen Sie beides sowie das Land des Kontos.',
+        de: 'Ecovacs hat die E-Mail-Adresse oder das Passwort abgelehnt. Prüfe beides sowie das Land des Kontos.',
         es: 'Ecovacs ha rechazado el correo electrónico o la contraseña. Compruébelos, así como el país de la cuenta.',
       };
     case 'verification':
       return {
         en: 'Ecovacs asks to confirm Gladys as a new device: click "Send the verification code", then enter the code received by email in "Confirm the device".',
         fr: 'Ecovacs demande de confirmer Gladys comme nouvel appareil : cliquez sur « Envoyer le code de vérification », puis saisissez le code reçu par e-mail dans « Confirmer l’appareil ».',
-        de: 'Ecovacs verlangt, Gladys als neues Gerät zu bestätigen: Klicken Sie auf „Bestätigungscode senden“ und geben Sie dann den per E-Mail erhaltenen Code unter „Gerät bestätigen“ ein.',
+        de: 'Ecovacs verlangt, Gladys als neues Gerät zu bestätigen: Klicke auf „Bestätigungscode senden“ und gib dann den per E-Mail erhaltenen Code unter „Gerät bestätigen“ ein.',
         es: 'Ecovacs pide confirmar Gladys como nuevo dispositivo: pulse «Enviar el código de verificación» y luego introduzca el código recibido por correo electrónico en «Confirmar el dispositivo».',
       };
     case 'code':
       return {
         en: 'Ecovacs refused the verification code (wrong or expired). Ask for a new one.',
         fr: 'Ecovacs a refusé le code de vérification (faux ou expiré). Demandez-en un nouveau.',
-        de: 'Ecovacs hat den Bestätigungscode abgelehnt (falsch oder abgelaufen). Fordern Sie einen neuen an.',
+        de: 'Ecovacs hat den Bestätigungscode abgelehnt (falsch oder abgelaufen). Fordere einen neuen an.',
         es: 'Ecovacs ha rechazado el código de verificación (incorrecto o caducado). Solicite uno nuevo.',
       };
     case 'network':
       return {
         en: 'The Ecovacs cloud cannot be reached. Check the Internet access of Gladys.',
         fr: 'Le cloud Ecovacs est injoignable. Vérifiez l’accès Internet de Gladys.',
-        de: 'Die Ecovacs-Cloud ist nicht erreichbar. Prüfen Sie den Internetzugang von Gladys.',
+        de: 'Die Ecovacs-Cloud ist nicht erreichbar. Prüfe den Internetzugang von Gladys.',
         es: 'No se puede acceder a la nube de Ecovacs. Compruebe el acceso a Internet de Gladys.',
       };
     default:
@@ -66,11 +66,11 @@ export function failureMessage(err) {
 /**
  * An error for a Configuration action: the screen shows it as a failure (in
  * red) instead of a result. The SDK carries a plain text there, not a
- * multi-language object, so every language goes in (each distinct text once).
+ * multi-language object, so it stays English + French only, as it always
+ * was: four languages in one red box read as noise.
  */
 export function actionError(message) {
-  const texts = new Set(LANGUAGES.map((language) => message[language]).filter(Boolean));
-  return new Error([...texts].join(' / '));
+  return new Error(message.en === message.fr ? message.en : `${message.en} / ${message.fr}`);
 }
 
 /** Result of a successful connection: the robots found. */
@@ -87,7 +87,7 @@ export function successMessage(account, robots, unsupported = []) {
       : {
           en: `Connected to ${account}: ${robots.length} robot(s) found (${names}). Add them from the Discover tab.`,
           fr: `Connecté à ${account} : ${robots.length} robot(s) trouvé(s) (${names}). Ajoutez-les depuis l’onglet Découverte.`,
-          de: `Verbunden mit ${account}: ${robots.length} Roboter gefunden (${names}). Fügen Sie sie über den Tab „Entdecken“ hinzu.`,
+          de: `Verbunden mit ${account}: ${robots.length} Roboter gefunden (${names}). Füge sie über den Tab „Entdecken“ hinzu.`,
           es: `Conectado a ${account}: ${robots.length} robot(s) encontrado(s) (${names}). Añádalos desde la pestaña «Descubrir».`,
         };
   if (unsupported.length > 0) {

@@ -71,7 +71,7 @@ const T = {
   unknown: {
     en: 'Pick a robot of the Ecovacs account in the widget settings.',
     fr: 'Choisissez un robot du compte Ecovacs dans les réglages du widget.',
-    de: 'Wählen Sie in den Widget-Einstellungen einen Roboter des Ecovacs-Kontos.',
+    de: 'Wähle in den Widget-Einstellungen einen Roboter des Ecovacs-Kontos.',
     es: 'Elija un robot de la cuenta de Ecovacs en los ajustes del widget.',
   },
 };
@@ -216,7 +216,7 @@ const ACTION_DONE = {
   locate: {
     en: 'Listen: the robot says where it is.',
     fr: 'Écoutez : le robot se signale.',
-    de: 'Hören Sie hin: Der Roboter meldet sich.',
+    de: 'Hör hin: Der Roboter meldet sich.',
     es: 'Escuche: el robot indica dónde está.',
   },
 };
