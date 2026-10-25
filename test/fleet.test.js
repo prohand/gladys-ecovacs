@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { DEVICE_FEATURE_CATEGORIES, DEVICE_FEATURE_TYPES } from '@gladysassistant/integration-sdk';
 import { EcovacsClient } from '../src/ecovacs/client.js';
-import { Fleet } from '../src/devices/index.js';
+import { Fleet, STATE_HEARTBEAT_MS } from '../src/devices/index.js';
 import { FEATURE } from '../src/devices/robot.js';
 import { POLL_FREQUENCIES_MS, normalizeConfig } from '../src/config.js';
 import { VACUUM_STATE } from '../src/ecovacs/robot.js';
@@ -18,7 +18,7 @@ import {
 
 async function makeFleet(devices = [ROBOT_T8], config = {}) {
   let now = 1_700_000_000_000;
-  const gladys = createFakeGladys();
+  const gladys = createFakeGladys({ now: () => now });
   const fake = createFakeEcovacs({ devices });
   const fleet = new Fleet(gladys, { now: () => now });
   fleet.use(
@@ -102,6 +102,28 @@ test('poll publishes the states, the consumables and the cloud badge', async () 
   assert.equal(lastValue(gladys, feature(FEATURE.ERROR)), 'No error');
   assert.equal(lastValue(gladys, feature('main-brush')), 83);
   assert.deepEqual(gladys.transports, [{ external_id: T8_ID, transport: 'cloud' }]);
+});
+
+test('a poll only publishes what changed, and everything again after the heartbeat', async () => {
+  const { fleet, gladys, fake, advance } = await makeFleet();
+  await fleet.poll({ external_id: T8_ID });
+  const first = gladys.published.length;
+  advance(60_000);
+  await fleet.poll({ external_id: T8_ID });
+  assert.equal(gladys.published.length, first, 'nothing changed, nothing sent');
+
+  fake.robots[ROBOT_T8.did].answers.getBattery = { value: 80, isLow: 0 };
+  advance(60_000);
+  await fleet.poll({ external_id: T8_ID });
+  assert.deepEqual(
+    gladys.published.slice(first).map((s) => s.device_feature_external_id),
+    [feature(FEATURE.BATTERY)],
+  );
+
+  advance(STATE_HEARTBEAT_MS);
+  const before = gladys.published.length;
+  await fleet.poll({ external_id: T8_ID });
+  assert.ok(gladys.published.length - before >= 6, 'heartbeat re-sends the stable values');
 });
 
 test('consumables are read every half hour, not at every poll', async () => {

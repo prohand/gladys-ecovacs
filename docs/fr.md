@@ -9,6 +9,8 @@ L'intégration passe par le **cloud Ecovacs**, avec le compte de l'application
 **Ecovacs Home** : Ecovacs ne propose pas de connexion locale. Il faut donc un
 accès Internet, et le robot doit être visible dans l'application.
 
+Nécessite **Gladys 5.3.0** ou plus récent.
+
 ## Avant de commencer
 
 1. Installez l'application **Ecovacs Home** et ajoutez-y vos robots.

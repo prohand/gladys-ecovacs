@@ -12,7 +12,8 @@ and the SDK
 - **Transport**: `cloud` only (`"transports": ["cloud"]` in the manifest).
   Ecovacs offers no local API; each robot card shows a `cloud` badge, or
   `unreachable` when the robot stops answering.
-- **Gladys**: 5.1.0 or later (scene triggers, scene actions, dashboard widget).
+- **Gladys**: 5.3.0 or later (catalog keywords; scene triggers, scene actions and dashboard
+  widget since 5.1.0).
 - **User documentation**: [English](docs/en.md) · [Français](docs/fr.md) ·
   [Deutsch](docs/de.md) · [Español](docs/es.md).
 
