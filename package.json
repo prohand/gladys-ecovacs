@@ -1,6 +1,6 @@
 {
   "name": "gladys-ecovacs",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "private": true,
   "description": "Gladys Assistant external integration for Ecovacs Deebot robot vacuums (Ecovacs cloud).",
   "type": "module",
