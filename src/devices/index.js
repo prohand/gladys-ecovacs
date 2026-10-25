@@ -18,6 +18,10 @@ const logger = createLogger({ name: 'fleet' });
 // Consumables wear slowly: read them every half hour, not at every poll.
 const CONSUMABLES_EVERY_MS = 30 * 60_000;
 
+// An unchanged state is sent again this often, so Gladys never shows a stable
+// value as stale.
+export const STATE_HEARTBEAT_MS = 30 * 60_000;
+
 // A poll for a robot the list does not know (added in the app since the
 // start) re-reads the list, at most this often.
 const LIST_REFRESH_MIN_MS = 5 * 60_000;
@@ -138,7 +142,7 @@ export class Fleet {
       throw err;
     }
     await this.setTransport(entry, DEVICE_TRANSPORTS.CLOUD);
-    await this.gladys.publishStates(statusStates(ids, status));
+    await this.publish(statusStates(ids, status));
 
     const who = { device: ids.device, name: robot.name };
     const events = transitionEvents(entry.previous, status, who);
@@ -149,7 +153,7 @@ export class Fleet {
         const consumables = await robot.readConsumables();
         const states = consumableStates(ids, consumables);
         if (states.length > 0) {
-          await this.gladys.publishStates(states);
+          await this.publish(states);
         }
         events.push(...consumableEvents(entry.consumables, consumables, robot.consumables, who));
         entry.consumables = consumables;
@@ -198,7 +202,11 @@ export class Fleet {
         return;
       case FEATURE.SUCTION:
         await robot.setSuction(String(value));
-        await this.gladys.publishState(feature.external_id, { text: String(value) });
+        // Through the same memory as the polls: a robot that ignored the order
+        // reads its old level at the next poll, which then differs and goes out.
+        await this.publish([
+          { device_feature_external_id: feature.external_id, text: String(value) },
+        ]);
         return;
       default:
         throw new Error(`Feature "${key}" cannot be controlled`);
@@ -263,6 +271,15 @@ export class Fleet {
       consumables: entry.consumables,
       transport: entry.transport,
     };
+  }
+
+  // Gladys takes 300 states a minute per integration and keeps a history row
+  // per state: a robot polled every 15 s mostly repeats itself. Only what
+  // changed goes out, plus every value each STATE_HEARTBEAT_MS so a stable one
+  // never looks stale. The SDK forgets a device's values when Gladys creates,
+  // updates or deletes it; index.js forgets them all on every (re)connection.
+  async publish(states) {
+    await this.gladys.publishChangedStates(states, { heartbeat: STATE_HEARTBEAT_MS });
   }
 
   // Fire-and-forget, rate-limited by the core (1 per 10 s).

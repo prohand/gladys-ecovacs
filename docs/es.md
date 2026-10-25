@@ -9,6 +9,8 @@ La integración pasa por la **nube de Ecovacs**, con la cuenta de la aplicación
 **Ecovacs Home**: Ecovacs no ofrece conexión local. Gladys necesita acceso a
 Internet, y el robot debe aparecer en la aplicación.
 
+Requiere **Gladys 5.3.0** o posterior.
+
 ## Antes de empezar
 
 1. Instale la aplicación **Ecovacs Home** y añada en ella sus robots.

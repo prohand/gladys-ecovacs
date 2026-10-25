@@ -10,6 +10,17 @@ the version's GitHub Release.
 
 ## [Unreleased]
 
+### Changed
+
+- `@gladysassistant/integration-sdk` updated to 0.16.0.
+- Gladys 5.3.0 or later is now required.
+- A poll only sends the states that changed (and every value again every 30 minutes), to stay
+  well under the 300 states per minute Gladys accepts and keep the history small.
+
+### Added
+
+- Search keywords for the Gladys catalog (Deebot Ozmo / Omni, robot vacuum, robotic mower...).
+
 ## [1.4.1] - 2026-10-23
 
 - Maintenance release, no functional change.

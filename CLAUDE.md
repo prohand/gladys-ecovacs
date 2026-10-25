@@ -61,8 +61,12 @@ src/capabilities/widget.js   dashboard widget: content from the last poll, butto
   `getCleanInfo` on a refusal (not on a timeout); the result is remembered per robot and
   decides `clean_V2` vs `clean`.
 - **Polling**: Gladys `poll_frequency` is an enum in ms (1000, 2000, 10000, 15000, 30000,
-  60000); any other value rejects the WHOLE discovery batch, and Gladys only polls a device
-  that also carries `should_poll: true`. The config offers 15 / 30 / 60 s.
+  60000); any other value rejects the WHOLE discovery batch. Since Gladys 5.3 the core sets
+  `should_poll` itself when `poll_frequency` is present; devices still publish
+  `should_poll: true` (cores before 5.3 only poll a device carrying it, and both fields are read
+  at creation only). The config offers 15 / 30 / 60 s.
+- **States go through `publishChangedStates`** (30-minute heartbeat): a robot polled every 15 s
+  mostly repeats itself, and Gladys takes 300 states a minute. `connected` forgets them all.
 - **Consumables** are read every 30 minutes, not at every poll (cloud load).
 - **Scene triggers fire on transitions only**, never on the first poll after a start.
 - **The widget never calls the cloud**: it renders the last poll (`Fleet.snapshot`); the Fleet
@@ -81,7 +85,9 @@ src/capabilities/widget.js   dashboard widget: content from the last poll, butto
 `test/manifest.test.js` keeps `gladys-assistant-integration.json` in sync with
 `DEFAULT_CONFIG`, the `onAction` handlers of `index.js`, `SCENE_TRIGGERS`, `SCENE_ACTIONS` and `WIDGETS`,
 and checks the store rules (multi-language texts, 10–100 character description,
-`gladys_version >= 5.1.0`, version = package version = image tag).
+`gladys_version >= 5.3.0` (keywords; 5.1.0 for scenes and widgets), keywords shape, no
+`countries` (sold worldwide), categories in the store vocabulary, version = package version =
+image tag).
 
 ## Testing
 

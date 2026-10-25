@@ -189,6 +189,9 @@ gladys.onConfigUpdated(async (newConfig) => {
 
 // --- Connection lifecycle ----------------------------------------------------
 gladys.on('connected', async () => {
+  // Gladys may have restarted, or lost values while the socket was down: the
+  // next polls publish every state again instead of only the changes.
+  gladys.forgetPublishedStates();
   try {
     applyConfig(await gladys.getConfig());
     await connectCloud();
