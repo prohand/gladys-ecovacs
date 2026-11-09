@@ -10,6 +10,8 @@ the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-11-09
+
 ### Added
 
 - The "Cleaning or mowing finished" trigger gives the area covered (m²) and the duration
@@ -100,7 +102,8 @@ the version's GitHub Release.
   multi-arch build, GitHub releases and Dependabot, as in gladys-devmel.
 - `SECURITY.md`, `CHANGELOG.md` and `CLAUDE.md`.
 
-[Unreleased]: https://github.com/prohand/gladys-ecovacs/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/prohand/gladys-ecovacs/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/prohand/gladys-ecovacs/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/prohand/gladys-ecovacs/compare/v1.4.1...v1.5.0
 [1.4.1]: https://github.com/prohand/gladys-ecovacs/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/prohand/gladys-ecovacs/compare/v1.3.1...v1.4.0
