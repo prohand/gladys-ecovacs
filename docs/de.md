@@ -81,7 +81,10 @@ Auslöser:
 - **Reinigung oder Mähen gestartet**: Der Roboter beginnt zu arbeiten (nicht
   beim Fortsetzen nach einer Pause).
 - **Reinigung oder Mähen beendet**: Der Roboter hat die Arbeit beendet
-  (fertig, gestoppt oder auf dem Rückweg).
+  (fertig, gestoppt oder auf dem Rückweg). Variablen
+  `{{triggerEvent.data.area}}` (bearbeitete Fläche, m²) und
+  `{{triggerEvent.data.duration}}` (Minuten), wenn der Roboter sie liefert:
+  „Küchen-Deebot hat 31 m² in 30 min gereinigt“.
 - **Roboter zurück an der Ladestation**: Der Roboter steht an seiner
   Ladestation oder Station und lädt.
 - **Roboterfehler**: Der Roboter hat einen neuen Fehler gemeldet. Variablen
@@ -163,5 +166,9 @@ Anfrage an die Ecovacs-Cloud.
   von Gladys. Die Integration versucht es alle 5 Minuten erneut.
 - **Der Roboter ist nicht erreichbar**: Er ist ausgeschaltet oder außerhalb des
   WLANs; prüfe, ob er in der App Ecovacs Home antwortet.
+- **Der Zustand in Gladys passt nicht zur Ecovacs-App**: Die Integration
+  schreibt eine Zeile `robot says state=... motion=... charging=...`, sobald
+  sich die Meldung des Roboters ändert, und eine Zeile `status not read (...)`,
+  wenn eine Abfrage fehlschlägt. Füge diese Zeilen deiner Fehlermeldung bei.
 - Die Protokolle der Integration (Gladys-Oberfläche oder `docker logs`)
   enthalten nie das Passwort oder die Tokens.

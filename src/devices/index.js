@@ -8,7 +8,7 @@
 // -----------------------------------------------------------------------------
 
 import { createLogger, DEVICE_TRANSPORTS } from '@gladysassistant/integration-sdk';
-import { Robot } from '../ecovacs/robot.js';
+import { Robot, VACUUM_STATE, rawStateSummary } from '../ecovacs/robot.js';
 import { consumableEvents, transitionEvents } from '../capabilities/scenes.js';
 import { ROBOT_WIDGET } from '../capabilities/widget.js';
 import { FEATURE, buildRobotDevice, consumableStates, robotIds, statusStates } from './robot.js';
@@ -40,7 +40,7 @@ export class Fleet {
     this.now = now;
     this.client = null;
     this.config = null;
-    this.entries = new Map(); // did -> { robot, previous, consumables, consumablesAt, transport }
+    this.entries = new Map(); // did -> { robot, previous, consumables, consumablesAt, transport, ... }
     this.unsupported = []; // names of the robots this integration cannot drive
     this.listedAt = 0;
   }
@@ -84,6 +84,8 @@ export class Fleet {
           consumables: undefined,
           consumablesAt: 0,
           transport: undefined,
+          failure: undefined,
+          rawState: undefined,
         });
       }
     }
@@ -119,13 +121,26 @@ export class Fleet {
     return this.findEntry(externalId);
   }
 
-  /** Gladys asks for fresh states of one robot. */
+  /**
+   * Gladys asks for fresh states of one robot. A failure is logged here: the
+   * SDK only acks it to Gladys, so a robot that never updates would otherwise
+   * leave nothing in the integration logs.
+   */
   async poll(device) {
     const entry = await this.entryFor(device.external_id);
     if (!entry) {
       logger.debug(`Poll ignored: ${device.external_id} is not on the account`);
       return;
     }
+    try {
+      await this.pollEntry(entry);
+    } catch (err) {
+      this.reportFailure(entry, err.message);
+      throw err;
+    }
+  }
+
+  async pollEntry(entry) {
     const { robot } = entry;
     const ids = robotIds(this.gladys, robot.info);
 
@@ -134,7 +149,7 @@ export class Fleet {
       status = await robot.readStatus();
     } catch (err) {
       if (UNREACHABLE_KINDS.has(err.kind)) {
-        logger.warn(`${robot.name}: ${err.message}`);
+        this.reportFailure(entry, err.message);
         await this.setTransport(entry, DEVICE_TRANSPORTS.UNREACHABLE);
         this.refreshWidget();
         return;
@@ -142,7 +157,15 @@ export class Fleet {
       throw err;
     }
     await this.setTransport(entry, DEVICE_TRANSPORTS.CLOUD);
+    this.logRawState(entry, status);
     await this.publish(statusStates(ids, status));
+    this.reportSuccess(entry);
+
+    // The figures of the job (area, time) go with the "finished" trigger:
+    // read while the robot works, and once more on the poll that sees it stop.
+    if (isCleaning(status.state) || isCleaning(entry.previous?.state)) {
+      status.stats = await this.readStats(entry);
+    }
 
     const who = { device: ids.device, name: robot.name };
     const events = transitionEvents(entry.previous, status, who);
@@ -174,6 +197,49 @@ export class Fleet {
       } catch (err) {
         logger.error(`Scene trigger ${event.key} refused`, err);
       }
+    }
+  }
+
+  // Stats of the current job. Both figures only grow during a job: on the
+  // poll that sees the end, the robot may already have reset them, so the
+  // highest of the two last readings is kept.
+  async readStats(entry) {
+    let fresh;
+    try {
+      fresh = await entry.robot.readStats();
+    } catch (err) {
+      logger.debug(`${entry.robot.name}: job figures not read (${err.message})`);
+    }
+    const before = isCleaning(entry.previous?.state) ? entry.previous.stats : undefined;
+    return {
+      area: highest(before?.area, fresh?.area),
+      time: highest(before?.time, fresh?.time),
+    };
+  }
+
+  // One line when what the robot says changes (not at every poll): when the
+  // Gladys state looks wrong, this is what to compare with the Ecovacs app.
+  logRawState(entry, status) {
+    const summary = rawStateSummary(status);
+    if (summary !== entry.rawState) {
+      entry.rawState = summary;
+      logger.info(`${entry.robot.name}: robot says ${summary} -> Gladys state ${status.state}`);
+    }
+  }
+
+  // A robot polled every 15 s that keeps failing the same way logs it once,
+  // then once more when it answers again.
+  reportFailure(entry, message) {
+    if (entry.failure !== message) {
+      entry.failure = message;
+      logger.warn(`${entry.robot.name}: status not read (${message})`);
+    }
+  }
+
+  reportSuccess(entry) {
+    if (entry.failure !== undefined) {
+      entry.failure = undefined;
+      logger.info(`${entry.robot.name}: status read again`);
     }
   }
 
@@ -302,6 +368,17 @@ export class Fleet {
       logger.debug(`Transport badge not published (${err.message})`);
     }
   }
+}
+
+function isCleaning(state) {
+  return state === VACUUM_STATE.RUNNING || state === VACUUM_STATE.PAUSED;
+}
+
+function highest(a, b) {
+  if (a === undefined) {
+    return b;
+  }
+  return b === undefined ? a : Math.max(a, b);
 }
 
 function widgetRowsChanged(previous, current) {

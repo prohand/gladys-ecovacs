@@ -49,7 +49,10 @@ export function transitionEvents(previous, current, robot) {
     events.push({ key: SCENE_TRIGGERS.CLEANING_STARTED, data: base });
   }
   if (CLEANING.includes(previous.state) && DONE.includes(current.state)) {
-    events.push({ key: SCENE_TRIGGERS.CLEANING_FINISHED, data: base });
+    events.push({
+      key: SCENE_TRIGGERS.CLEANING_FINISHED,
+      data: { ...base, ...jobFigures(current.stats) },
+    });
   }
   if (ON_DOCK.includes(current.state) && !ON_DOCK.includes(previous.state)) {
     events.push({ key: SCENE_TRIGGERS.ROBOT_DOCKED, data: base });
@@ -61,6 +64,20 @@ export function transitionEvents(previous, current, robot) {
     });
   }
   return events;
+}
+
+// Area (m²) and duration (minutes) of the job that just ended, for the
+// "finished" trigger. A figure the robot did not give is left out: the core
+// then exposes it as null.
+function jobFigures(stats) {
+  const figures = {};
+  if (stats?.area !== undefined) {
+    figures.area = stats.area;
+  }
+  if (stats?.time !== undefined) {
+    figures.duration = Math.round(stats.time / 60);
+  }
+  return figures;
 }
 
 /**

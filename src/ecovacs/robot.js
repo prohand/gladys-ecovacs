@@ -245,6 +245,22 @@ export function toVacuumState({ cleanInfo, charge, battery, errorCode }) {
   return VACUUM_STATE.STOPPED;
 }
 
+/**
+ * The robot's own words behind a status, for the logs: when the Gladys state
+ * looks wrong, this is what to compare with the Ecovacs app.
+ */
+export function rawStateSummary({ cleanInfo, cleanInfoRefused, charge, errorCode }) {
+  const words = cleanInfoRefused
+    ? [`clean info refused (${cleanInfoRefused})`]
+    : [
+        `state=${cleanInfo?.state ?? '?'}`,
+        `motion=${cleanInfo?.cleanState?.motionState ?? '-'}`,
+        `trigger=${cleanInfo?.trigger ?? '-'}`,
+      ];
+  words.push(`charging=${charge?.isCharging ?? '?'}`, `error=${errorCode ?? 0}`);
+  return words.join(' ');
+}
+
 export function suctionKey(speed) {
   return SUCTION_LEVELS.find((level) => level.speed === Number(speed))?.key;
 }
@@ -321,7 +337,19 @@ export class Robot {
    * left undefined; the robot not answering at all throws.
    */
   async readStatus() {
-    const cleanInfo = await this.readCleanInfo();
+    // A robot that refuses both clean info commands still has a battery and
+    // a charge state worth showing: only a robot that does not answer at all
+    // fails the read. `cleanInfoRefused` says why the state is a guess.
+    let cleanInfo;
+    let cleanInfoRefused;
+    try {
+      cleanInfo = await this.readCleanInfo();
+    } catch (err) {
+      if (!isRefusal(err)) {
+        throw err;
+      }
+      cleanInfoRefused = err.message;
+    }
     const [battery, charge, speed, error] = await Promise.all([
       this.send('getBattery').catch(ignoreRefusal),
       this.send('getChargeState').catch(ignoreRefusal),
@@ -331,6 +359,7 @@ export class Robot {
     ]);
     const status = {
       cleanInfo,
+      cleanInfoRefused,
       charge,
       battery: battery?.value !== undefined ? Number(battery.value) : undefined,
       charging: charge ? Number(charge.isCharging) === 1 : undefined,
@@ -339,6 +368,20 @@ export class Robot {
     };
     status.state = toVacuumState(status);
     return status;
+  }
+
+  /**
+   * Figures of the job in progress (`getStats`): `{ area, time }`, area in
+   * m², time in seconds, each undefined when the robot does not say it.
+   */
+  async readStats() {
+    const data = await this.send('getStats');
+    const area = Number(data?.area);
+    const time = Number(data?.time);
+    return {
+      area: Number.isFinite(area) && area >= 0 ? area : undefined,
+      time: Number.isFinite(time) && time >= 0 ? time : undefined,
+    };
   }
 
   /** Consumables, as `{ key: percent }`: read far less often than the status. */

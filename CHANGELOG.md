@@ -10,6 +10,19 @@ the version's GitHub Release.
 
 ## [Unreleased]
 
+### Added
+
+- The "Cleaning or mowing finished" trigger gives the area covered (m²) and the duration
+  (minutes) of the job, when the robot reports them (#9).
+
+### Fixed
+
+- A robot whose status could not be read left nothing in the logs: the failure is now logged
+  (once, then once more when the robot answers again) (#8).
+- A robot that refuses the cleaning-state commands still updates its battery and charge.
+- Each change of what the robot reports (state, motion, charge, error) is logged, to compare
+  with the Ecovacs app when the Gladys state looks wrong (#8).
+
 ## [1.5.0] - 2026-10-25
 
 ### Changed

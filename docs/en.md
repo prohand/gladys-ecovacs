@@ -76,7 +76,9 @@ Triggers:
 - **Cleaning or mowing started**: the robot starts working (not when it
   resumes after a pause).
 - **Cleaning or mowing finished**: the robot stopped working (done, stopped
-  or on its way back).
+  or on its way back). Variables `{{triggerEvent.data.area}}` (area covered,
+  m²) and `{{triggerEvent.data.duration}}` (minutes), when the robot gives
+  them: "Kitchen Deebot cleaned 31 m² in 30 min".
 - **Robot back on its dock**: the robot is on its dock or station, charging.
 - **Robot error**: the robot reported a new error. Variables
   `{{triggerEvent.data.code}}` and `{{triggerEvent.data.message}}`. Perfect
@@ -154,5 +156,9 @@ to the Ecovacs cloud.
   Gladys. The integration retries every 5 minutes.
 - **The robot is unreachable**: it is switched off or out of Wi-Fi; check it
   answers in the Ecovacs Home app.
+- **The state in Gladys does not match the Ecovacs app**: the integration
+  logs a line `robot says state=... motion=... charging=...` each time what
+  the robot reports changes, and a `status not read (...)` line when a
+  reading fails. Join these lines to your bug report.
 - The integration logs (Gladys UI or `docker logs`) never contain the
   password or the tokens.

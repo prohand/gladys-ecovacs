@@ -570,6 +570,26 @@
             "de": "Name des Roboters",
             "es": "Nombre del robot"
           }
+        },
+        {
+          "key": "area",
+          "type": "number",
+          "label": {
+            "en": "Area covered (m²)",
+            "fr": "Surface couverte (m²)",
+            "de": "Bearbeitete Fläche (m²)",
+            "es": "Superficie cubierta (m²)"
+          }
+        },
+        {
+          "key": "duration",
+          "type": "number",
+          "label": {
+            "en": "Duration (minutes)",
+            "fr": "Durée (minutes)",
+            "de": "Dauer (Minuten)",
+            "es": "Duración (minutos)"
+          }
         }
       ]
     },

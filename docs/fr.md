@@ -80,7 +80,9 @@ Déclencheurs :
 - **Nettoyage ou tonte démarré** : le robot commence à travailler (pas quand
   il reprend après une pause).
 - **Nettoyage ou tonte terminé** : le robot a fini de travailler (terminé,
-  arrêté ou en route vers sa base).
+  arrêté ou en route vers sa base). Variables `{{triggerEvent.data.area}}`
+  (surface couverte, m²) et `{{triggerEvent.data.duration}}` (minutes), quand
+  le robot les donne : « Deebot cuisine a nettoyé 31 m² en 30 min ».
 - **Robot revenu sur sa base** : le robot est sur sa base ou sa station et se
   recharge.
 - **Erreur du robot** : le robot signale une nouvelle erreur. Variables
@@ -162,5 +164,10 @@ aucune requête au cloud Ecovacs.
   Gladys. L'intégration réessaie toutes les 5 minutes.
 - **Le robot est injoignable** : il est éteint ou hors Wi-Fi ; vérifiez qu'il
   répond dans l'application Ecovacs Home.
+- **L'état dans Gladys ne correspond pas à l'application Ecovacs** :
+  l'intégration écrit une ligne `robot says state=... motion=... charging=...`
+  à chaque fois que ce que dit le robot change, et une ligne
+  `status not read (...)` quand une lecture échoue. Joignez ces lignes à votre
+  signalement.
 - Les logs de l'intégration (interface Gladys ou `docker logs`) ne
   contiennent jamais le mot de passe ni les jetons.
