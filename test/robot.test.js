@@ -8,6 +8,7 @@ import {
   errorMessage,
   lifePercent,
   parseErrorCode,
+  rawStateSummary,
   robotKind,
   toVacuumState,
 } from '../src/ecovacs/robot.js';
@@ -191,4 +192,37 @@ test('a mower is not asked for its suction', async () => {
   const { robot, fake } = makeRobot(ROBOT_GOAT);
   await robot.readStatus();
   assert.ok(!fake.commands(ROBOT_GOAT.did).some((c) => c.name === 'getSpeed'));
+});
+
+test('a robot refusing both clean info commands still reports its battery', async () => {
+  const { fake, robot } = makeRobot();
+  const answers = fake.robots[ROBOT_T8.did].answers;
+  delete answers.getCleanInfo_V2;
+  delete answers.getCleanInfo;
+  answers.getChargeState = { isCharging: 1 };
+  const status = await robot.readStatus();
+  assert.equal(status.battery, 87);
+  assert.equal(status.state, VACUUM_STATE.CHARGING);
+  assert.match(status.cleanInfoRefused, /getCleanInfo/);
+  assert.match(rawStateSummary(status), /^clean info refused .* charging=1 error=0$/);
+});
+
+test('rawStateSummary gives the robot words behind a status', () => {
+  assert.equal(
+    rawStateSummary({
+      cleanInfo: { state: 'clean', trigger: 'app', cleanState: { motionState: 'working' } },
+      charge: { isCharging: 0 },
+      errorCode: 0,
+    }),
+    'state=clean motion=working trigger=app charging=0 error=0',
+  );
+  assert.equal(rawStateSummary({}), 'state=? motion=- trigger=- charging=? error=0');
+});
+
+test('readStats reads the area and time of the job', async () => {
+  const { fake, robot } = makeRobot();
+  fake.robots[ROBOT_T8.did].answers.getStats = { area: 23, time: 1250, type: 'auto' };
+  assert.deepEqual(await robot.readStats(), { area: 23, time: 1250 });
+  fake.robots[ROBOT_T8.did].answers.getStats = { type: 'auto' };
+  assert.deepEqual(await robot.readStats(), { area: undefined, time: undefined });
 });

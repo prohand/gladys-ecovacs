@@ -82,7 +82,9 @@ Desencadenadores:
 - **Limpieza o siega iniciada**: el robot empieza a trabajar (no cuando reanuda
   tras una pausa).
 - **Limpieza o siega terminada**: el robot ha dejado de trabajar (terminado,
-  detenido o de vuelta a la base).
+  detenido o de vuelta a la base). Variables `{{triggerEvent.data.area}}`
+  (superficie cubierta, m²) y `{{triggerEvent.data.duration}}` (minutos),
+  cuando el robot las facilita: «Deebot cocina ha limpiado 31 m² en 30 min».
 - **Robot de vuelta en su base**: el robot está en su base o estación,
   cargándose.
 - **Error del robot**: el robot ha notificado un nuevo error. Variables
@@ -163,5 +165,9 @@ a la nube de Ecovacs.
   Internet de Gladys. La integración reintenta cada 5 minutos.
 - **El robot está inaccesible**: está apagado o fuera del alcance de la red
   wifi; compruebe que responde en la aplicación Ecovacs Home.
+- **El estado en Gladys no coincide con la aplicación Ecovacs**: la
+  integración escribe una línea `robot says state=... motion=... charging=...`
+  cada vez que cambia lo que dice el robot, y una línea `status not read (...)`
+  cuando falla una lectura. Adjunte estas líneas a su informe.
 - Los registros de la integración (interfaz de Gladys o `docker logs`) nunca
   contienen la contraseña ni los tokens.

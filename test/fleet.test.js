@@ -14,6 +14,7 @@ import {
   ROBOT_T8,
   createFakeEcovacs,
   offline,
+  refusal,
 } from './helpers/fakeEcovacs.js';
 
 async function makeFleet(devices = [ROBOT_T8], config = {}) {
@@ -246,4 +247,65 @@ test('locate answers false when the robot does not answer', async () => {
   fake.robots[ROBOT_T8.did].answers.playSound = offline();
   assert.equal(await fleet.locate(T8_ID), false);
   assert.equal(await fleet.locate('ext:ecovacs:vacuum:unknown'), false);
+});
+
+test('cleaning finished carries the area and duration of the job', async () => {
+  const { fleet, fake, gladys } = await makeFleet();
+  const answers = fake.robots[ROBOT_T8.did].answers;
+  answers.getCleanInfo_V2 = { state: 'idle', cleanState: {} };
+  await fleet.poll({ external_id: T8_ID });
+  assert.ok(!fake.commands(ROBOT_T8.did).some((c) => c.name === 'getStats'), 'not read when idle');
+
+  answers.getCleanInfo_V2 = { state: 'clean', cleanState: { motionState: 'working' } };
+  answers.getStats = { area: 31, time: 1790 };
+  await fleet.poll({ external_id: T8_ID });
+
+  // The robot already reset its figures when the end is seen: the last
+  // reading during the job wins.
+  answers.getCleanInfo_V2 = { state: 'goCharging', cleanState: {} };
+  answers.getStats = { area: 0, time: 0 };
+  await fleet.poll({ external_id: T8_ID });
+  const finished = gladys.sceneEvents.find((e) => e.key === SCENE_TRIGGERS.CLEANING_FINISHED);
+  assert.deepEqual(finished.data, {
+    device: T8_ID,
+    name: 'Kitchen Deebot',
+    area: 31,
+    duration: 30,
+  });
+});
+
+test('a robot without job figures still fires cleaning finished', async () => {
+  const { fleet, fake, gladys } = await makeFleet();
+  const answers = fake.robots[ROBOT_T8.did].answers;
+  answers.getCleanInfo_V2 = { state: 'clean', cleanState: { motionState: 'working' } };
+  answers.getStats = refusal(20001, 'not support');
+  await fleet.poll({ external_id: T8_ID });
+  answers.getCleanInfo_V2 = { state: 'idle', cleanState: {} };
+  await fleet.poll({ external_id: T8_ID });
+  assert.deepEqual(gladys.sceneEvents, [
+    { key: SCENE_TRIGGERS.CLEANING_FINISHED, data: { device: T8_ID, name: 'Kitchen Deebot' } },
+  ]);
+});
+
+test('a failing poll is logged once, then its recovery', async (t) => {
+  const warnings = t.mock.method(console, 'error', () => {});
+  const infos = t.mock.method(console, 'log', () => {});
+  const { fleet, gladys } = await makeFleet();
+  const publish = gladys.publishChangedStates;
+  gladys.publishChangedStates = async () => {
+    throw new Error('400 bad state');
+  };
+  await assert.rejects(fleet.poll({ external_id: T8_ID }), /400 bad state/);
+  await assert.rejects(fleet.poll({ external_id: T8_ID }), /400 bad state/);
+  const lines = (mock) => mock.mock.calls.map((call) => call.arguments.join(' '));
+  assert.equal(lines(warnings).filter((l) => l.includes('400 bad state')).length, 1);
+
+  gladys.publishChangedStates = publish;
+  await fleet.poll({ external_id: T8_ID });
+  assert.equal(lines(infos).filter((l) => l.includes('status read again')).length, 1);
+  assert.equal(
+    lines(infos).filter((l) => l.includes('robot says state=idle')).length,
+    1,
+    'the robot words are logged on change only',
+  );
 });
