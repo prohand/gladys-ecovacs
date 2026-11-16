@@ -10,6 +10,8 @@ the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.6.2] - 2026-11-16
+
 - Update `@gladysassistant/integration-sdk` to 0.16.1 (security update).
 
 ## [1.6.1] - 2026-11-16
@@ -108,7 +110,8 @@ the version's GitHub Release.
   multi-arch build, GitHub releases and Dependabot, as in gladys-devmel.
 - `SECURITY.md`, `CHANGELOG.md` and `CLAUDE.md`.
 
-[Unreleased]: https://github.com/prohand/gladys-ecovacs/compare/v1.6.1...HEAD
+[Unreleased]: https://github.com/prohand/gladys-ecovacs/compare/v1.6.2...HEAD
+[1.6.2]: https://github.com/prohand/gladys-ecovacs/compare/v1.6.1...v1.6.2
 [1.6.1]: https://github.com/prohand/gladys-ecovacs/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/prohand/gladys-ecovacs/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/prohand/gladys-ecovacs/compare/v1.4.1...v1.5.0
