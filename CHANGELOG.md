@@ -10,6 +10,8 @@ the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.6.3] - 2026-11-17
+
 ### Fixed
 
 - A maintenance notice (replace the dust bag, brush worn out: codes 106, 113, 312) no longer
@@ -116,7 +118,8 @@ the version's GitHub Release.
   multi-arch build, GitHub releases and Dependabot, as in gladys-devmel.
 - `SECURITY.md`, `CHANGELOG.md` and `CLAUDE.md`.
 
-[Unreleased]: https://github.com/prohand/gladys-ecovacs/compare/v1.6.2...HEAD
+[Unreleased]: https://github.com/prohand/gladys-ecovacs/compare/v1.6.3...HEAD
+[1.6.3]: https://github.com/prohand/gladys-ecovacs/compare/v1.6.2...v1.6.3
 [1.6.2]: https://github.com/prohand/gladys-ecovacs/compare/v1.6.1...v1.6.2
 [1.6.1]: https://github.com/prohand/gladys-ecovacs/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/prohand/gladys-ecovacs/compare/v1.5.0...v1.6.0
