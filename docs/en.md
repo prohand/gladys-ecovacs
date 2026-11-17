@@ -132,6 +132,10 @@ to the Ecovacs cloud.
 | 312  | Replace the dust bag  |
 | 1007 | Mop plate loose       |
 
+106, 113 and 312 are maintenance notices: they show in **Last error** (orange in
+the widget) and fire the **Robot error** trigger, but leave the state as it is
+(charging, docked...). Clear them in the Ecovacs app once the part is replaced.
+
 ## Supported robots
 
 - Recent Deebots (JSON protocol): OZMO 920/950, T8, T9, T10, T20, T30, X1,

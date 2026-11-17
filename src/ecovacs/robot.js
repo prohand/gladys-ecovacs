@@ -189,6 +189,16 @@ export const ERROR_MESSAGES = {
   },
 };
 
+// Maintenance notices, not failures: the robot still cleans and docks. Ecovacs
+// keeps reporting them until they are cleared in its app, so they must not put
+// the Gladys state in error (#8). They stay in the error feature and trigger.
+export const MAINTENANCE_CODES = new Set([106, 113, 312]);
+
+/** True for a code that stops the robot (unknown codes included). */
+export function isBlockingError(code) {
+  return Boolean(code) && !MAINTENANCE_CODES.has(Number(code));
+}
+
 export const NO_ERROR = {
   en: 'No error',
   fr: 'Aucune erreur',
@@ -228,7 +238,7 @@ export function parseErrorCode(data) {
  * @param {number} [status.errorCode]
  */
 export function toVacuumState({ cleanInfo, charge, battery, errorCode }) {
-  if (errorCode) {
+  if (isBlockingError(errorCode)) {
     return VACUUM_STATE.ERROR;
   }
   const state = cleanInfo?.state;

@@ -13,7 +13,7 @@
 // -----------------------------------------------------------------------------
 
 import { DEVICE_TRANSPORTS, WIDGET_COLORS } from '@gladysassistant/integration-sdk';
-import { SUCTION_LEVELS, VACUUM_STATE, errorMessage } from '../ecovacs/robot.js';
+import { SUCTION_LEVELS, VACUUM_STATE, errorMessage, isBlockingError } from '../ecovacs/robot.js';
 import { CONSUMABLE_LOW_PERCENT } from './scenes.js';
 
 export const ROBOT_WIDGET = 'robot';
@@ -109,6 +109,14 @@ const SUCTION_LABELS = {
 
 const pick = (text, language) => text[language] ?? text.en;
 
+// A maintenance notice (replace the dust bag...) is a warning, not a failure.
+function errorColor(code) {
+  if (!code) {
+    return WIDGET_COLORS.SUCCESS;
+  }
+  return isBlockingError(code) ? WIDGET_COLORS.DANGER : WIDGET_COLORS.WARNING;
+}
+
 /**
  * Content of one widget instance.
  * @param {import('../devices/index.js').Fleet} fleet
@@ -137,7 +145,7 @@ export function buildRobotWidget(fleet, { settings = {}, language = 'en' } = {})
       {
         label: T.error,
         value: pick(errorMessage(status.errorCode), language).slice(0, 40),
-        color: status.errorCode ? WIDGET_COLORS.DANGER : WIDGET_COLORS.SUCCESS,
+        color: errorColor(status.errorCode),
       },
     ];
     if (status.suction && SUCTION_LEVELS.some((level) => level.key === status.suction)) {

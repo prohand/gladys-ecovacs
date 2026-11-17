@@ -140,6 +140,10 @@ a la nube de Ecovacs.
 | 312    | Sustituya la bolsa de polvo   |
 | 1007   | Soporte de la mopa suelto     |
 
+106, 113 y 312 son avisos de mantenimiento: aparecen en **Último error** (en
+naranja en el widget) y activan **Error del robot**, pero no cambian el estado
+(cargando, en la base...). Bórrelos en la app de Ecovacs una vez cambiada la pieza.
+
 ## Robots compatibles
 
 - Deebots recientes (protocolo JSON): OZMO 920/950, T8, T9, T10, T20, T30, X1,

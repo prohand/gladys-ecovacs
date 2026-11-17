@@ -139,6 +139,11 @@ aucune requête au cloud Ecovacs.
 | 312  | Remplacez le sac à poussière    |
 | 1007 | Support de serpillière mal fixé |
 
+106, 113 et 312 sont des alertes d'entretien : elles apparaissent dans
+**Dernière erreur** (en orange dans le widget) et déclenchent **Erreur du robot**,
+mais ne changent pas l'état (en charge, sur la base...). Effacez-les dans l'app
+Ecovacs une fois la pièce changée.
+
 ## Robots pris en charge
 
 - Les Deebot récents (protocole JSON) : OZMO 920/950, T8, T9, T10, T20, T30,

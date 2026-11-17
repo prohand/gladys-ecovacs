@@ -10,6 +10,12 @@ the version's GitHub Release.
 
 ## [Unreleased]
 
+### Fixed
+
+- A maintenance notice (replace the dust bag, brush worn out: codes 106, 113, 312) no longer
+  puts the robot state in error: it stays charging, docked or running, and the notice shows in
+  orange in the widget (#8).
+
 ## [1.6.2] - 2026-11-16
 
 - Update `@gladysassistant/integration-sdk` to 0.16.1 (security update).
