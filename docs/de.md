@@ -140,6 +140,11 @@ Anfrage an die Ecovacs-Cloud.
 | 312  | Ersetze den Staubbeutel                |
 | 1007 | Wischplatte locker                     |
 
+106, 113 und 312 sind Wartungshinweise: Sie erscheinen unter **Letzter Fehler**
+(orange im Widget) und lösen **Roboterfehler** aus, ändern aber den Zustand nicht
+(lädt, an der Station...). Lösche sie in der Ecovacs-App, sobald das Teil ersetzt
+ist.
+
 ## Unterstützte Roboter
 
 - Aktuelle Deebots (JSON-Protokoll): OZMO 920/950, T8, T9, T10, T20, T30, X1,

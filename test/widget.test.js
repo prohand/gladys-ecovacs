@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { validateWidgetContent } from '@gladysassistant/integration-sdk';
+import { WIDGET_COLORS, validateWidgetContent } from '@gladysassistant/integration-sdk';
 import { EcovacsClient } from '../src/ecovacs/client.js';
 import { Fleet } from '../src/devices/index.js';
 import { normalizeConfig } from '../src/config.js';
@@ -73,6 +73,22 @@ test('after polls: status rows, live battery, rendered exactly as sent', async (
   assert.equal(rows.Connection, 'Cloud');
   // Working: the first button pauses.
   assert.deepEqual(buttons(content), ['pause', 'stop', 'dock', 'locate']);
+});
+
+test('a maintenance notice: normal state, orange error row (#8)', async () => {
+  const { fleet, fake } = await makeFleet();
+  const answers = fake.robots[ROBOT_T8.did].answers;
+  answers.getCleanInfo_V2 = { state: 'idle' };
+  answers.getChargeState = { isCharging: 1 };
+  answers.getError = { code: [312] };
+  await fleet.poll({ external_id: T8_ID });
+  const content = widget.get(fleet, { settings: { device: T8_ID }, language: 'en' });
+  assert.deepEqual(validateWidgetContent(content), []);
+  const status = content.components.find((c) => c.type === 'status');
+  const rows = Object.fromEntries(status.items.map((i) => [i.label.en, i]));
+  assert.notEqual(rows.State.value, 'Error');
+  assert.equal(rows.Error.value, 'Replace the dust bag');
+  assert.equal(rows.Error.color, WIDGET_COLORS.WARNING);
 });
 
 test('the rows follow the reader language: German, Spanish, English otherwise', async () => {

@@ -6,6 +6,7 @@ import {
   VACUUM_STATE,
   ERROR_MESSAGES,
   errorMessage,
+  isBlockingError,
   lifePercent,
   parseErrorCode,
   rawStateSummary,
@@ -57,6 +58,28 @@ test('toVacuumState maps the Ecovacs words to the Gladys states', () => {
     toVacuumState({ cleanInfo: { state: 'clean' }, errorCode: 105 }),
     VACUUM_STATE.ERROR,
   );
+});
+
+test('a maintenance notice does not put the robot in error (#8)', () => {
+  // A T50 on its dock asking for a new dust bag: still charging, as the app says.
+  assert.equal(
+    toVacuumState({
+      cleanInfo: { state: 'idle' },
+      charge: { isCharging: 1 },
+      battery: 80,
+      errorCode: 312,
+    }),
+    VACUUM_STATE.CHARGING,
+  );
+  assert.equal(
+    toVacuumState({ cleanInfo: { state: 'clean' }, errorCode: 106 }),
+    VACUUM_STATE.RUNNING,
+  );
+  assert.equal(isBlockingError(0), false);
+  assert.equal(isBlockingError(113), false);
+  assert.equal(isBlockingError(105), true);
+  // A code we do not know may be serious: kept as an error.
+  assert.equal(isBlockingError(9999), true);
 });
 
 test('parseErrorCode: 0 and 100 mean no error', () => {
